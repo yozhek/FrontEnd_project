@@ -1,15 +1,16 @@
 <template>
-  <div>
-    <p>
-      MovieGuess is the ultimate challenge for movie lovers!
+  <div class="main-info">
+    <p class="home-description">
+      <strong>MovieGuess</strong> is the ultimate challenge for movie lovers!<br />
       Test your knowledge by guessing movies based on a single screenshot — can you recognize them all?
-
-      🟡 Explore screenshots from iconic and obscure films
-      🟡 Climb the Leaderboard by earning points with correct answers
-      🟡 Track your progress and stats in your personal Profile
-      🟡 Log in to compete with friends and movie buffs around the world
-      🟡 Stay connected — follow us on social media for updates and challenges
     </p>
+    <ul class="features-list">
+      <li>Explore screenshots from iconic and obscure films</li>
+      <li>Climb the <strong>Leaderboard</strong> by earning points with correct answers</li>
+      <li>Track your progress and stats in your personal <strong>Profile</strong></li>
+      <li>Log in to compete with friends and movie buffs around the world</li>
+      <li>Stay connected — follow us on social media for updates and challenges</li>
+    </ul>
   </div>
 
   <div class="first-container">
@@ -36,6 +37,22 @@ export default {
 </script>
 
 <style scoped>
+.home-description{
+  font-size: 1.5rem;
+}
+
+.features-list{
+  font-size: 1.3rem;
+}
+
+.main-info{
+  padding: 2rem;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: var(--color-primary-soft);
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
 
 .first-container{
   width: auto;
@@ -48,6 +65,5 @@ export default {
   width: auto;
   display: flex;
   gap: 20px;
-  margin-bottom: 20px;
 }
 </style>

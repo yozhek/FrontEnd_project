@@ -83,6 +83,8 @@ export default {
 
 <style scoped>
 .main{
+  display: flex;
+  flex-direction: column;
   padding: 2rem;
   box-sizing: border-box;
   width: 50%;
@@ -115,12 +117,16 @@ button {
   font-size: 1.2rem;
   border-radius: 20px;
   cursor: pointer;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 button:hover {
   background-color: var(--color-accent);
-  transform: scale(1.05);
+  transform: scale(1.01);
+}
+
+a{
+  transition: transform 0.3s ease;
 }
 
 a:hover{
@@ -128,9 +134,12 @@ a:hover{
 }
 
 .button-container {
+  margin-top: auto;
   display: flex;
+  align-items: flex-end;
   justify-content: flex-end;
   width: 100%;
+  height: auto;
   gap: 20px;
 }
 </style>
