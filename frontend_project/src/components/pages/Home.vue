@@ -49,7 +49,6 @@ export default {
   padding: 2rem;
   box-sizing: border-box;
   width: 100%;
-  background-color: var(--color-primary-soft);
   border-radius: 20px;
   margin-bottom: 20px;
 }
@@ -57,13 +56,20 @@ export default {
 .first-container{
   width: auto;
   display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 40px;
+  padding-inline: 40px;
+  margin-bottom: 40px;
 }
 
 .second-container{
   width: auto;
   display: flex;
-  gap: 20px;
+  gap: 40px;
+  padding-inline: 40px;
+  margin-bottom: 40px;
+}
+
+ul, p{
+  color: var(--color-black);
 }
 </style>

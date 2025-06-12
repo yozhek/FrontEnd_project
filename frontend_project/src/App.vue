@@ -56,7 +56,7 @@
   align-items: center;
   justify-content: center;
   background-color: var(--color-primary);
-  color: white;
+  color: var(--color-white);
   border-radius: 20px;
 }
 
@@ -73,7 +73,7 @@
 }
 
 .nav-left a{
-  color: white;
+  color: var(--color-white);
   text-decoration: none;
   margin-right: 3rem;
   transition: transform 0.3s ease, color 0.3s ease;
@@ -101,7 +101,7 @@
 }
 
 .nav-right .login-btn {
-  background-color: white;
+  background-color: var(--color-white);
   border: none;
   padding: 0.5rem 1rem;
   color: var(--color-primary);
@@ -111,12 +111,12 @@
 
 .nav-right .login-btn:hover {
   background-color: var(--color-accent);
-  color: white;
+  color: var(--color-white);
 }
 
 .nav-right .router-link-exact-active .login-btn{
   background-color: var(--color-accent);
-  color: white;
+  color: var(--color-white);
   transform: scale(1.2);
   transition: transform 0.3s ease, color 0.3s ease;
 }
@@ -128,9 +128,11 @@
 
 
 main {
+  border-radius: 20px;
+  background: var(--color-white);
   min-height: 81vh;
   width: 1100px;
-  padding: 20px;
+  margin: 20px;
 }
 
 
@@ -143,7 +145,7 @@ main {
   align-items: center;
   justify-content: center;
   background-color: var(--color-primary);
-  color: white;
+  color: var(--color-white);
   border-radius: 20px;
 }
 
@@ -156,7 +158,7 @@ main {
 }
 
 .footer a {
-  color: white;
+  color: var(--color-white);
   text-decoration: none;
   margin-left: 2rem;
   display: inline-block;
