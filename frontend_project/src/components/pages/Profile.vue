@@ -50,7 +50,7 @@
                 <span class="label">Email:</span>
                 <span class="value">{{ user.email }}</span>
               </div>
-              <button class="btn-change">Change Email</button>
+              <button class="btn-change">Change</button>
             </div>
 
             <div class="info-item setting-row">
@@ -58,7 +58,7 @@
                 <span class="label">Password:</span>
                 <span class="value">••••••••</span>
               </div>
-              <button class="btn-change">Change Password</button>
+              <button class="btn-change">Change</button>
             </div>
           </div>
         </div>
