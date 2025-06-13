@@ -1,16 +1,16 @@
 
-/*:root {*/
-/*  --color-primary: #480059;*/
-/*  --color-primary-light: #fde9ff;*/
-/*  --color-accent: #ff75eb;*/
-/*  --color-white: white;*/
-/*  --color-black: black;*/
-/*}*/
-
 :root {
-  --color-primary: #4B164C;
-  --color-primary-light: #F8E7F6;
-  --color-accent: #DD88CF;
-  --color-white: #F5F5F5;
+  --color-primary: #480059;
+  --color-primary-light: #fde9ff;
+  --color-accent: #ff75eb;
+  --color-white: white;
   --color-black: black;
 }
+
+/*:root {*/
+/*  --color-primary: #4B164C;*/
+/*  --color-primary-light: #F8E7F6;*/
+/*  --color-accent: #DD88CF;*/
+/*  --color-white: #F5F5F5;*/
+/*  --color-black: black;*/
+/*}*/
