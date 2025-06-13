@@ -1,4 +1,3 @@
-
 <template>
   <div id="app">
     <nav class="navbar">
@@ -10,11 +9,16 @@
           <RouterLink to="/profile">Profile</RouterLink>
         </div>
         <div class="nav-right">
-          <RouterLink to="/registration">
-            <RouterLink to="/login">
-              <button class="login-btn">Login</button>
+          <template v-if="isAuthenticated">
+            <button class="login-btn" @click="handleLogout">Logout</button>
+          </template>
+          <template v-else>
+            <RouterLink to="/registration">
+              <RouterLink to="/login">
+                <button class="login-btn">Login</button>
+              </RouterLink>
             </RouterLink>
-          </RouterLink>
+          </template>
         </div>
       </div>
     </nav>
@@ -40,6 +44,23 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '@/stores/auth'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+
+const authStore = useAuthStore()
+const { isAuthenticated } = storeToRefs(authStore)
+const router = useRouter()
+
+onMounted(() => {
+  authStore.init()
+})
+
+const handleLogout = async () => {
+  await authStore.logout()
+  router.push('/')
+}
 </script>
 
 <style scoped>

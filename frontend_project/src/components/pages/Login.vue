@@ -5,13 +5,13 @@
       <p class="auth-description">Log in to start your movie guessing adventure!</p>
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
-          <label for="login">Username</label>
+          <label for="email">Email</label>
           <input
-            type="text"
-            id="login"
-            v-model="login"
+            type="email"
+            id="email"
+            v-model="email"
             required
-            placeholder="Enter your username"
+            placeholder="Enter your email"
           />
         </div>
         <div class="form-group">
@@ -24,8 +24,9 @@
             placeholder="Enter your password"
           />
         </div>
+        <div v-if="error" class="error-message">{{ error }}</div>
         <div class="buttons">
-          <button type="submit" class="login-btn">Login</button>
+          <button type="submit" class="login-btn" :disabled="loading">{{ loading ? 'Logging in...' : 'Login' }}</button>
           <button type="button" class="register-btn" @click="goToRegister">
             Create Account
           </button>
@@ -34,7 +35,7 @@
       <div class="divider">
         <span>or</span>
       </div>
-      <button class="google-btn" @click="handleGoogleLogin">
+      <button class="google-btn" @click="handleGoogleLogin" :disabled="loading">
         <img src="@/assets/google-logo.svg" alt="Google logo" class="google-logo" />
         Continue with Google
       </button>
@@ -45,26 +46,38 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
-const login = ref('')
+const authStore = useAuthStore()
+const email = ref('')
 const password = ref('')
+const error = ref(null)
+const loading = ref(false)
 
 const handleSubmit = async () => {
+  error.value = null
+  loading.value = true
   try {
-    // Here will be authentication logic
-    console.log('Login attempt:', { login: login.value, password: password.value })
-  } catch (error) {
-    console.error('Auth error:', error)
+    await authStore.login(email.value, password.value)
+    router.push('/profile')
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    loading.value = false
   }
 }
 
 const handleGoogleLogin = async () => {
+  error.value = null
+  loading.value = true
   try {
-    // Here will be Google authentication logic
-    console.log('Google login attempt')
-  } catch (error) {
-    console.error('Google auth error:', error)
+    await authStore.loginWithGoogle()
+    router.push('/profile')
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    loading.value = false
   }
 }
 
