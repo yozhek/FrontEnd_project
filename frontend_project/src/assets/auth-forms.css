@@ -3,8 +3,6 @@
   justify-content: center;
   align-items: center;
   min-height: 81vh;
-  width: 100%;
-  background: var(--color-primary-light);
 }
 
 .auth-form {
@@ -147,4 +145,4 @@ button {
 .google-logo {
   width: 24px;
   height: 24px;
-} 
+}

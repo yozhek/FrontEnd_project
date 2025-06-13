@@ -45,9 +45,9 @@
 <style scoped>
 #app{
   display: flex;
-  flex-direction: column; /* или row, если нужно по горизонтали */
-  align-items: center;     /* по горизонтали */
-  justify-content: center; /* по вертикали */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar {
@@ -130,8 +130,6 @@
 
 
 main {
-  border-radius: 20px;
-  background: var(--color-white);
   min-height: 81vh;
   width: 1100px;
   margin: 20px;
