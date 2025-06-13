@@ -41,12 +41,17 @@ export default {
 <style scoped>
 
 .main_home{
+  display: flex;
+  flex-direction: column;
   border-radius: 20px;
+  padding: 40px;
+  gap: 40px;
   background: var(--color-white);
 }
 
 .home-description{
   font-size: 1.5rem;
+  margin-bottom: 20px;
 }
 
 .features-list{
@@ -54,27 +59,21 @@ export default {
 }
 
 .main-info{
-  padding: 2rem;
   box-sizing: border-box;
   width: 100%;
   border-radius: 20px;
-  margin-bottom: 20px;
 }
 
 .first-container{
   width: auto;
   display: flex;
   gap: 40px;
-  padding-inline: 40px;
-  margin-bottom: 40px;
 }
 
 .second-container{
   width: auto;
   display: flex;
   gap: 40px;
-  padding-inline: 40px;
-  margin-bottom: 40px;
 }
 
 ul, p{
