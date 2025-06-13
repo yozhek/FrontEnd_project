@@ -46,6 +46,7 @@ export default {
   border-radius: 20px;
   padding: 40px;
   gap: 40px;
+  min-height: 81vh;
   background: var(--color-white);
 }
 

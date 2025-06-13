@@ -1,7 +1,7 @@
 <template>
   <div class="game-container">
     <!-- Game Rules Section -->
-    <div class="rules-section" v-if="!showGame && !showDifficulty">
+    <div class="rules-section" v-if="!showGame && !showDifficulty && !showResults">
       <h1>Movie Quiz Game</h1>
       <div class="rules-content">
         <h2>How to Play</h2>
@@ -32,16 +32,15 @@
       <div class="progress-bar">
         <div class="progress" :style="{ width: progress + '%' }"></div>
       </div>
-
       <div class="question-container">
         <img :src="currentQuestion.screenshot" alt="Movie Screenshot" class="movie-screenshot" />
         <div class="options-container">
           <button
             v-for="option in currentQuestion.options"
             :key="option"
-            @click="checkAnswer(option)"
+            @click="!selectedAnswer && checkAnswer(option)"
             class="option-btn"
-            :class="{ selected: selectedAnswer === option }"
+            :disabled="!!selectedAnswer"
           >
             {{ option }}
           </button>
@@ -57,12 +56,41 @@
         <p>Total Questions: {{ totalQuestions }}</p>
         <p>Score: {{ score }}%</p>
       </div>
+      <h3>Review your answers:</h3>
+      <div class="review-list">
+        <div v-for="(ans, idx) in userAnswers" :key="idx" class="review-item">
+          <img :src="ans.question.screenshot" class="review-screenshot" alt="Movie Screenshot" />
+          <div class="review-info">
+            <p><strong>Correct answer:</strong> {{ ans.question.correctAnswer }}</p>
+            <p
+              :class="{
+                wrong: ans.selected !== ans.question.correctAnswer,
+                correct: ans.selected === ans.question.correctAnswer,
+              }"
+            >
+              <strong>Your answer:</strong> {{ ans.selected }}
+            </p>
+          </div>
+        </div>
+      </div>
       <button @click="resetGame" class="play-again-btn">Play Again</button>
     </div>
   </div>
 </template>
 
 <script>
+const API_KEY = '563f70945fc2525450acc89c06c8c972'
+const BASE_URL = 'https://api.themoviedb.org/3'
+const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original'
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
+}
+
 export default {
   name: 'GameView',
   data() {
@@ -76,52 +104,109 @@ export default {
       correctAnswers: 0,
       totalQuestions: 10,
       progress: 0,
-      questions: [], // This will be populated with actual questions
+      questions: [],
       currentQuestion: {
         screenshot: '',
         options: [],
         correctAnswer: '',
+        original_title: '',
       },
+      loading: false,
+      error: '',
+      userAnswers: [],
     }
   },
   methods: {
-    startGame(difficulty) {
+    async startGame(difficulty) {
       this.difficulty = difficulty
       this.showDifficulty = false
-      this.showGame = true
-      this.loadQuestions()
+      this.showGame = false
+      this.showResults = false
+      this.loading = true
+      this.error = ''
+      this.currentQuestionIndex = 0
+      this.correctAnswers = 0
+      this.progress = 0
+      this.selectedAnswer = null
+      this.userAnswers = []
+      try {
+        await this.loadQuestions()
+        this.currentQuestion = this.questions[0]
+        this.showGame = true
+      } catch {
+        this.error = 'Failed to load questions. Please try again.'
+      } finally {
+        this.loading = false
+      }
     },
-    loadQuestions() {
-      // TODO: Load questions based on difficulty
-      // This is a placeholder for the actual questions
-      this.questions = [
-        {
-          screenshot: '/path/to/screenshot1.jpg',
-          options: ['Movie 1', 'Movie 2', 'Movie 3', 'Movie 4'],
-          correctAnswer: 'Movie 1',
-        },
-        // Add more questions here
-      ]
-      this.currentQuestion = this.questions[0]
+    async loadQuestions() {
+      let sortBy, minVoteCount, maxVoteCount
+      if (this.difficulty === 'easy') {
+        sortBy = 'popularity.desc'
+        minVoteCount = 500
+      } else if (this.difficulty === 'medium') {
+        sortBy = 'popularity.desc'
+        minVoteCount = 100
+        maxVoteCount = 500
+      } else {
+        sortBy = 'popularity.asc'
+        minVoteCount = 50
+      }
+      let movies = await this.fetchMovies(sortBy, minVoteCount, maxVoteCount)
+      movies = shuffle(movies).slice(0, this.totalQuestions)
+      this.questions = await Promise.all(
+        movies.map(async (movie) => {
+          const screenshots = await this.fetchScreenshots(movie.id)
+          const screenshot =
+            screenshots.length > 0
+              ? IMAGE_BASE_URL + screenshots[0].file_path
+              : IMAGE_BASE_URL + movie.backdrop_path
+          let options = [movie.original_title]
+          let otherMovies = shuffle(movies.filter((m) => m.id !== movie.id)).slice(0, 3)
+          options = options.concat(otherMovies.map((m) => m.original_title))
+          options = shuffle(options)
+          return {
+            screenshot,
+            options,
+            correctAnswer: movie.original_title,
+            original_title: movie.original_title,
+          }
+        }),
+      )
+    },
+    async fetchMovies(sortBy, minVoteCount, maxVoteCount) {
+      let url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-US&sort_by=${sortBy}&vote_count.gte=${minVoteCount}`
+      if (maxVoteCount !== null && maxVoteCount !== undefined) {
+        url += `&vote_count.lte=${maxVoteCount}`;
+      }
+      const response = await fetch(url)
+      const data = await response.json()
+      return data.results.filter((m) => m.backdrop_path && m.title)
+    },
+    async fetchScreenshots(movieId) {
+      const url = `${BASE_URL}/movie/${movieId}/images?api_key=${API_KEY}`
+      const response = await fetch(url)
+      const data = await response.json()
+      return data.backdrops || []
     },
     checkAnswer(answer) {
+      this.userAnswers.push({
+        question: this.currentQuestion,
+        selected: answer,
+      })
       this.selectedAnswer = answer
-      if (answer === this.currentQuestion.correctAnswer) {
-        this.correctAnswers++
-      }
-
-      setTimeout(() => {
-        this.nextQuestion()
-      }, 1000)
+      this.nextQuestion()
     },
     nextQuestion() {
       this.currentQuestionIndex++
       this.selectedAnswer = null
-
       if (this.currentQuestionIndex < this.questions.length) {
         this.currentQuestion = this.questions[this.currentQuestionIndex]
         this.progress = (this.currentQuestionIndex / this.totalQuestions) * 100
       } else {
+        this.correctAnswers = this.userAnswers.filter(
+          (ans, idx) => ans.selected === this.questions[idx].correctAnswer,
+        ).length
         this.showResults = true
         this.showGame = false
       }
@@ -133,6 +218,7 @@ export default {
       this.correctAnswers = 0
       this.progress = 0
       this.selectedAnswer = null
+      this.userAnswers = []
     },
   },
   computed: {
@@ -145,10 +231,10 @@ export default {
 
 <style scoped>
 .game-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: 100vh;
+  background: var(--color-white);
+  border-radius: 20px;
+  padding: 40px;
+  min-height: 81vh;
 }
 
 .rules-section {
@@ -322,4 +408,37 @@ export default {
 .play-again-btn:hover {
   background: #45a049;
 }
+
+.review-list {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.review-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1rem;
+}
+.review-screenshot {
+  width: 180px;
+  border-radius: 8px;
+}
+.review-info {
+  flex: 1;
+}
+.review-info p {
+  margin: 0.3rem 0;
+  font-size: 1.1rem;
+}
+.review-info .wrong {
+  color: #f44336;
+}
+.review-info .correct {
+  color: #4caf50;
+}
+
 </style>
