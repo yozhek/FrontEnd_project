@@ -10,8 +10,10 @@
           <RouterLink to="/profile">Profile</RouterLink>
         </div>
         <div class="nav-right">
-          <RouterLink to="/login">
-            <button class="login-btn">Login</button>
+          <RouterLink to="/registration">
+            <RouterLink to="/login">
+              <button class="login-btn">Login</button>
+            </RouterLink>
           </RouterLink>
         </div>
       </div>
