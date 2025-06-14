@@ -12,7 +12,9 @@
             v-model="username"
             required
             placeholder="Choose your username"
+            @input="onNicknameInput"
           />
+          <div v-if="nicknameError" class="error-message">{{ nicknameError }}</div>
         </div>
         <div class="form-group">
           <label for="email">Email</label>
@@ -22,7 +24,9 @@
             v-model="email"
             required
             placeholder="Enter your email"
+            @input="onEmailInput"
           />
+          <div v-if="emailError" class="error-message">{{ emailError }}</div>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -57,7 +61,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { updateProfile } from 'firebase/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -66,17 +69,51 @@ const email = ref('')
 const password = ref('')
 const error = ref(null)
 const loading = ref(false)
+const emailError = ref(null)
+const nicknameError = ref(null)
+
+defineOptions({ name: 'RegistrationPage' })
+
+function validateEmail(email) {
+  // Простая email-маска
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return re.test(email)
+}
+
+async function isNicknameTaken(nickname) {
+  // Проверяем уникальность никнейма по всем профилям
+  // Firestore не поддерживает прямой поиск по полю без индекса, но для простоты делаем запрос
+  const { getDocs, collection, query, where } = await import('firebase/firestore')
+  const { db } = await import('@/firebase/config')
+  const q = query(collection(db, 'users'), where('nickname', '==', nickname))
+  const querySnapshot = await getDocs(q)
+  return !querySnapshot.empty
+}
 
 const handleSubmit = async () => {
   error.value = null
   loading.value = true
   try {
-    const user = await authStore.register(email.value, password.value)
-    // Сохраняем username в профиле пользователя
-    await updateProfile(user, { displayName: username.value })
+    if (!validateEmail(email.value)) {
+      error.value = 'Please enter a valid email address.'
+      return
+    }
+    if (await isNicknameTaken(username.value)) {
+      error.value = 'This nickname is already taken. Please choose another one.'
+      return
+    }
+    await authStore.register(email.value, password.value, username.value)
     router.push('/profile')
   } catch (err) {
-    error.value = err.message
+    if (err.code === 'auth/email-already-in-use') {
+      error.value = 'This email is already in use.'
+    } else if (err.code === 'auth/invalid-email') {
+      error.value = 'Please enter a valid email address.'
+    } else if (err.code === 'auth/weak-password') {
+      error.value = 'Password should be at least 6 characters.'
+    } else {
+      error.value = err.message
+    }
   } finally {
     loading.value = false
   }
@@ -87,7 +124,12 @@ const handleGoogleRegister = async () => {
   loading.value = true
   try {
     await authStore.loginWithGoogle()
-    router.push('/profile')
+    // Если у пользователя нет профиля, перенаправляем на форму для ввода никнейма
+    if (!authStore.userProfile || !authStore.userProfile.nickname) {
+      router.push({ name: 'SetNickname' })
+    } else {
+      router.push('/profile')
+    }
   } catch (err) {
     error.value = err.message
   } finally {
@@ -97,6 +139,22 @@ const handleGoogleRegister = async () => {
 
 const goToLogin = () => {
   router.push('/login')
+}
+
+function onEmailInput() {
+  if (!validateEmail(email.value)) {
+    emailError.value = 'Please enter a valid email address.'
+  } else {
+    emailError.value = null
+  }
+}
+
+async function onNicknameInput() {
+  if (username.value && await isNicknameTaken(username.value)) {
+    nicknameError.value = 'This nickname is already taken. Please choose another one.'
+  } else {
+    nicknameError.value = null
+  }
 }
 </script>
 
