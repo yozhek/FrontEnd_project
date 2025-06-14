@@ -44,10 +44,8 @@ export default {
   display: flex;
   flex-direction: column;
   border-radius: 20px;
-  padding: 40px;
   gap: 40px;
   min-height: 83vh;
-  background: var(--color-white);
 }
 
 .home-description{
@@ -63,6 +61,8 @@ export default {
   box-sizing: border-box;
   width: 100%;
   border-radius: 20px;
+  padding: 40px;
+  background: var(--color-white);
 }
 
 .first-container{

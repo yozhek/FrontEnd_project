@@ -85,27 +85,29 @@ export default {
 .main{
   display: flex;
   flex-direction: column;
-  padding: 2rem;
+  padding: 40px;
   box-sizing: border-box;
   width: 50%;
+  border: 10px solid white;
   background-color: var(--color-primary);
   border-radius: 20px;
-  box-shadow: 0 0 40px var(--color-black-shadow);
-  transition: transform 0.5s ease;
+  box-shadow: 0 0 20px var(--color-black-shadow);
+  transition: all 0.5s ease;
 }
 
 .main:hover{
-  transform: scale(1.02);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
+  transform: scale(1.05);
 }
 
 h1 {
   color: var(--color-white);
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
 }
 
 p {
   font-size: 1.2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
   color: var(--color-white);
 }
 
@@ -114,7 +116,7 @@ button {
   color: var(--color-primary);
   border: none;
   padding: 1rem 2rem;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   border-radius: 20px;
   cursor: pointer;
   transition: color 0.3s ease, transform 0.3s ease;

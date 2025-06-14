@@ -70,13 +70,19 @@ const sortedLeaders = computed(() => {
 .leaderboard-container {
   background: var(--color-white);
   border-radius: 20px;
-  box-shadow: 0 4px 24px var(--color-black-shadow);
+  box-shadow: 0 0 20px var(--color-black-shadow);
   padding: 2rem 2rem 2rem 2rem;
   width: 50%;
   margin: 2rem auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: all 0.5s;
+}
+
+.leaderboard-container:hover {
+  transform: scale(1.01);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 
 .leaderboard-title {
@@ -93,8 +99,8 @@ const sortedLeaders = computed(() => {
 }
 
 .sort-btn {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-white);
   border: none;
   border-radius: 20px;
   padding: 0.5rem 1.2rem;
@@ -128,14 +134,13 @@ const sortedLeaders = computed(() => {
   align-items: center;
   justify-content: space-between;
   background: var(--color-white);
-  border-radius: 16px;
+  border-radius: 20px;
   margin-bottom: 1rem;
   padding: 1rem 1.5rem;
   font-size: 1.2rem;
   color: var(--color-primary);
   box-shadow: 0 2px 8px var(--color-black-shadow);
-  position: relative;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 .leader-item:hover {
   transform: scale(1.03) translateY(-2px);
@@ -144,19 +149,19 @@ const sortedLeaders = computed(() => {
 
 .leader-item.top1 {
   border: 2px solid gold;
-  background: linear-gradient(90deg, #fffbe6 0%, #ffe7c7 100%);
+  background: linear-gradient(90deg, #ffe46a 0%, rgb(255, 250, 207) 100%);
   font-size: 1.35rem;
   font-weight: bold;
   z-index: 3;
 }
 .leader-item.top2 {
   border: 2px solid silver;
-  background: linear-gradient(90deg, #f8fafd 0%, #e6e8ea 100%);
+  background: linear-gradient(90deg, #c0c0c0 0%, #f8fafd 100%);
   z-index: 2;
 }
 .leader-item.top3 {
   border: 2px solid #cd7f32;
-  background: linear-gradient(90deg, #fff4e0 0%, #ffe0b2 100%);
+  background: linear-gradient(90deg, #ffb763 0%, #fff2d3 100%);
   z-index: 1;
 }
 

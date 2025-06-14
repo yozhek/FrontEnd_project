@@ -73,7 +73,7 @@ const handleLogout = async () => {
 
 .navbar {
   box-sizing: border-box;
-  height: 60px;
+  height: 80px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -81,12 +81,20 @@ const handleLogout = async () => {
   background-color: var(--color-primary);
   color: var(--color-white);
   border-radius: 20px;
+  box-shadow: 0 0 20px var(--color-black-shadow);
+  border: 10px solid var(--color-white);
+  transition: all 0.5s;
+}
+
+.navbar:hover {
+  transform: scale(1.01);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 
 .nav-mid{
   display: flex;
   justify-content: space-between;
-  width: 1100px;
+  width: 1000px;
 }
 
 .nav-left {
@@ -153,8 +161,8 @@ const handleLogout = async () => {
 main {
   display: flex;
   flex-direction: column;
-  min-height: 83vh;
-  width: 1100px;
+  min-height: 78vh;
+  width: 1000px;
   margin: 20px;
 }
 
@@ -162,7 +170,7 @@ main {
 
 .footer {
   box-sizing: border-box;
-  height: 60px;
+  height: 80px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -170,6 +178,14 @@ main {
   background-color: var(--color-primary);
   color: var(--color-white);
   border-radius: 20px;
+  box-shadow: 0 0 20px var(--color-black-shadow);
+  border: 10px solid var(--color-white);
+  transition: all 0.5s;
+}
+
+.footer:hover{
+  transform: scale(1.01);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 
 .footer-mid{
@@ -177,7 +193,7 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 1100px;
+  width: 1000px;
 }
 
 .footer a {

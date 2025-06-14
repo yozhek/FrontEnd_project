@@ -2,7 +2,6 @@
   <div class="game-container">
     <!-- Game Rules Section -->
     <div class="rules-section" v-if="!showGame && !showDifficulty && !showResults">
-      <h1>Movie Quiz Game</h1>
       <div class="rules-content">
         <h2>How to Play</h2>
         <ul>
@@ -50,13 +49,15 @@
 
     <!-- Results Screen -->
     <div class="results-screen" v-if="showResults">
-      <h2>Quiz Results</h2>
-      <div class="stats">
-        <p>Correct Answers: {{ correctAnswers }}</p>
-        <p>Total Questions: {{ totalQuestions }}</p>
-        <p>Score: {{ score }}%</p>
+      <div class="quizResults">
+        <h2>Quiz Results</h2>
+        <div class="stats">
+          <p>Correct Answers: {{ correctAnswers }}</p>
+          <p>Total Questions: {{ totalQuestions }}</p>
+          <p>Score: {{ score }}%</p>
+        </div>
+        <h3>Review your answers:</h3>
       </div>
-      <h3>Review your answers:</h3>
       <div class="review-list">
         <div v-for="(ans, idx) in userAnswers" :key="idx" class="review-item">
           <img :src="ans.question.screenshot" class="review-screenshot" alt="Movie Screenshot" />
@@ -235,9 +236,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--color-white);
-  border-radius: 20px;
-  padding: 40px;
   flex-grow: 1;
 }
 
@@ -245,29 +243,47 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   flex-grow: 1;
   width: 100%;
+  height: 100%;
   text-align: center;
 }
 
 .rules-content {
-  margin-top: 40px;
-  width: 50%;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  background: var(--color-white);
+  width: auto;
   box-shadow: 0 0 20px var(--color-black-shadow);
   padding: 40px;
   border-radius: 20px;
+  transition: all 0.5s;
+}
+
+.rules-content:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 
 .rules-content ul {
   list-style: none;
   text-align: center;
   padding: 0;
-  margin: 2rem 0;
+  margin: 40px 0;
+}
+
+h1{
+  font-size: 3rem;
+}
+h2{
+  font-size: 2rem;
 }
 
 .rules-content li {
   margin: 1rem 0;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
 }
 
 .play-button {
@@ -328,6 +344,7 @@ export default {
   background: #4caf50;
   color: white;
 }
+
 .medium {
   background: #ffc107;
   color: black;
@@ -338,7 +355,16 @@ export default {
 }
 
 .game-interface {
-  max-width: 1100px;
+  max-width: 1000px;
+  background: var(--color-white);
+  border-radius: 20px;
+  box-shadow: 0 0 20px var(--color-black-shadow);
+  padding: 40px;
+  transition: all 0.5s;
+}
+.game-interface:hover {
+  transform: scale(1.01);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 
 .progress-bar {
@@ -393,6 +419,12 @@ export default {
   text-align: center;
 }
 
+.quizResults{
+  background: var(--color-white);
+  border-radius: 20px;
+  padding: 20px;
+}
+
 .stats {
   margin: 20px 0;
   font-size: 1.2rem;
@@ -415,7 +447,7 @@ export default {
 }
 
 .review-list {
-  margin: 40px 0;
+  margin: 20px 0;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -432,6 +464,7 @@ export default {
 }
 .review-item:hover {
   transform: scale(1.01);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 
 .review-screenshot {
