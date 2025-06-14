@@ -68,11 +68,11 @@ const sortedLeaders = computed(() => {
 
 <style scoped>
 .leaderboard-container {
-  background: var(--color-primary-soft);
-  border-radius: 24px;
-  box-shadow: 0 4px 24px var(--color-glow);
-  padding: 2.5rem 2rem 2rem 2rem;
-  max-width: 600px;
+  background: var(--color-white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px var(--color-black-shadow);
+  padding: 2rem 2rem 2rem 2rem;
+  width: 50%;
   margin: 2rem auto;
   display: flex;
   flex-direction: column;
@@ -84,7 +84,6 @@ const sortedLeaders = computed(() => {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   letter-spacing: 2px;
-  text-shadow: 0 2px 8px var(--color-glow);
 }
 
 .sort-controls {
@@ -94,7 +93,7 @@ const sortedLeaders = computed(() => {
 }
 
 .sort-btn {
-  background: var(--color-white);
+  background: var(--color-primary-light);
   color: var(--color-primary);
   border: none;
   border-radius: 20px;
@@ -102,13 +101,19 @@ const sortedLeaders = computed(() => {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, transform 0.2s;
-  box-shadow: 0 2px 8px var(--color-glow);
+  transition: all 0.3s, color 0.3s, transform 0.3s;
+  box-shadow: 0 2px 8px var(--color-black-shadow);
 }
-.sort-btn.active, .sort-btn:hover {
+
+.sort-btn:hover, .sort-btn.active:hover {
+  transform: scale(1.2);
+  box-shadow: 0 7px 12px var(--color-black-shadow);
+}
+
+.sort-btn.active{
   background: var(--color-accent);
   color: var(--color-white);
-  transform: scale(1.08);
+
 }
 
 .leader-list {
@@ -128,13 +133,13 @@ const sortedLeaders = computed(() => {
   padding: 1rem 1.5rem;
   font-size: 1.2rem;
   color: var(--color-primary);
-  box-shadow: 0 2px 8px var(--color-glow);
+  box-shadow: 0 2px 8px var(--color-black-shadow);
   position: relative;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .leader-item:hover {
   transform: scale(1.03) translateY(-2px);
-  box-shadow: 0 6px 16px var(--color-glow);
+  box-shadow: 0 6px 16px var(--color-black-shadow);
 }
 
 .leader-item.top1 {
