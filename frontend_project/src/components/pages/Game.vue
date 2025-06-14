@@ -153,6 +153,7 @@ export default {
         minVoteCount = 50
       }
       let movies = await this.fetchMovies(sortBy, minVoteCount, maxVoteCount)
+      let allMovies = movies;
       movies = shuffle(movies).slice(0, this.totalQuestions)
       this.questions = await Promise.all(
         movies.map(async (movie) => {
@@ -162,7 +163,7 @@ export default {
               ? IMAGE_BASE_URL + screenshots[0].file_path
               : IMAGE_BASE_URL + movie.backdrop_path
           let options = [movie.original_title]
-          let otherMovies = shuffle(movies.filter((m) => m.id !== movie.id)).slice(0, 3)
+          let otherMovies = shuffle(allMovies.filter((m) => m.id !== movie.id)).slice(0, 3)
           options = options.concat(otherMovies.map((m) => m.original_title))
           options = shuffle(options)
           return {
@@ -231,28 +232,36 @@ export default {
 
 <style scoped>
 .game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: var(--color-white);
   border-radius: 20px;
   padding: 40px;
-  min-height: 81vh;
+  flex-grow: 1;
 }
 
 .rules-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  width: 100%;
   text-align: center;
-  padding: 2rem;
 }
 
 .rules-content {
-  max-width: 800px;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2rem;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
+  margin-top: 40px;
+  width: 50%;
+  box-shadow: 0 0 20px var(--color-black-shadow);
+  padding: 40px;
+  border-radius: 20px;
 }
 
 .rules-content ul {
-  text-align: left;
+  list-style: none;
+  text-align: center;
+  padding: 0;
   margin: 2rem 0;
 }
 
@@ -262,18 +271,19 @@ export default {
 }
 
 .play-button {
-  background: #4caf50;
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 1rem 2rem;
   font-size: 1.2rem;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
 }
 
 .play-button:hover {
-  background: #45a049;
+  transform: scale(1.1);
+  background: var(--color-accent);
 }
 
 .difficulty-modal {
@@ -291,7 +301,7 @@ export default {
 .difficulty-content {
   background: white;
   padding: 2rem;
-  border-radius: 10px;
+  border-radius: 20px;
   text-align: center;
 }
 
@@ -304,7 +314,7 @@ export default {
 .difficulty-btn {
   padding: 1rem 2rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
   font-size: 1.1rem;
   transition: transform 0.2s;
@@ -328,23 +338,22 @@ export default {
 }
 
 .game-interface {
-  max-width: 1000px;
-  margin: 0 auto;
+  max-width: 1100px;
 }
 
 .progress-bar {
   width: 100%;
   height: 10px;
-  background: #ddd;
-  border-radius: 5px;
-  margin-bottom: 2rem;
+  background: var(--color-primary-light);
+  border-radius: 20px;
+  margin-bottom: 20px;
 }
 
 .progress {
   height: 100%;
-  background: #4caf50;
-  border-radius: 5px;
-  transition: width 0.3s;
+  background: var(--color-accent);
+  border-radius: 20px;
+  transition: width 1s;
 }
 
 .question-container {
@@ -354,85 +363,95 @@ export default {
 .movie-screenshot {
   max-width: 100%;
   height: auto;
-  border-radius: 10px;
-  margin-bottom: 2rem;
+  border-radius: 20px;
+  margin-bottom: 20px;
 }
 
 .options-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 20px;
 }
 
 .option-btn {
+  font-size: 1.3rem;
   padding: 1rem;
-  border: 2px solid #ddd;
-  border-radius: 5px;
-  background: white;
+  border: 2px solid var(--color-primary);
+  border-radius: 20px;
+  background: var(--color-white);
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .option-btn:hover {
-  border-color: #4caf50;
-}
-
-.option-btn.selected {
-  background: #4caf50;
-  color: white;
-  border-color: #4caf50;
+  transform: scale(1.03);
+  background: var(--color-primary-light);
+  border-color: var(--color-accent);
 }
 
 .results-screen {
   text-align: center;
-  padding: 2rem;
 }
 
 .stats {
-  margin: 2rem 0;
+  margin: 20px 0;
   font-size: 1.2rem;
 }
 
 .play-again-btn {
-  background: #4caf50;
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 1rem 2rem;
   font-size: 1.2rem;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
 }
 
 .play-again-btn:hover {
-  background: #45a049;
+  transform: scale(1.1);
+  background: var(--color-accent);
 }
 
 .review-list {
-  margin-top: 2rem;
+  margin: 40px 0;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 20px;
 }
 .review-item {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 1rem;
+  gap: 10px;
+  background: var(--color-white);
+  box-shadow: 0 0 20px var(--color-black-shadow);
+  border-radius: 20px;
+  padding: 10px;
+  transition: all 0.5s;
 }
+.review-item:hover {
+  transform: scale(1.01);
+}
+
 .review-screenshot {
-  width: 180px;
-  border-radius: 8px;
+  width: 350px;
+  border-radius: 20px;
+  transition: all 0.5s;
 }
+
+.review-screenshot:hover{
+  transform: scale(1.7) translateY(-40px);
+
+}
+
 .review-info {
   flex: 1;
 }
+
 .review-info p {
-  margin: 0.3rem 0;
-  font-size: 1.1rem;
+  margin: 10px 0;
+  font-size: 1.3rem;
 }
 .review-info .wrong {
   color: #f44336;
