@@ -1,6 +1,6 @@
 .main-info {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   min-height: 81vh;
   width: 100%;
@@ -11,19 +11,18 @@
   display: flex;
   gap: 28px;
   max-width: 1100px;
-  margin: 2rem auto;
-  padding: 1rem;
   align-items: flex-start;
   width: 100%;
+  padding-top: 1rem;
 }
 
+/* Левая карточка профиля */
 .profile-card {
   background: var(--color-white);
   border-radius: 20px;
-  padding: 2rem;
   box-shadow: 0 0 20px var(--color-accent);
   color: var(--color-primary);
-  width: 450px;
+  width: 50%;
   height: 420px;
   text-align: center;
 }
@@ -32,6 +31,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
+  padding: 1rem;
 }
 
 .avatar {
@@ -43,22 +43,73 @@
 
 .username {
   font-size: 1.8rem;
-  margin: 0.5rem 0 2rem 0;
+  margin: 1rem;
   color: var(--color-primary);
 }
 
+/* Правая колонка - контейнер для двух карточек */
+.right-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 50%;
+  height: 420px;
+}
+
+/* Одинаковые карточки справа */
+.quiz-card {
+  background: var(--color-white);
+  border-radius: 20px;
+  box-shadow: 0 0 20px var(--color-accent);
+  color: var(--color-primary);
+  text-align: center;
+  height: 50%;
+}
+
+.settings-card {
+  background: var(--color-white);
+  border-radius: 20px;
+  box-shadow: 0 0 20px var(--color-accent);
+  color: var(--color-primary);
+  text-align: center;
+  height: 50%;
+}
+
+/* Списки информации */
 .info-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   text-align: left;
+}
+
+/* Стили для левой карточки */
+.profile-card .info-list {
   max-width: 300px;
   margin: 0 auto;
 }
 
+/* Стили для квиз карточки */
+.quiz-card .info-list {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* Стили для карточки настроек */
+.settings-card .info-list {
+  max-width: none;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Базовые элементы информации */
 .info-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0.5rem 1rem;
   background-color: #f7fafd;
   border-radius: 12px;
@@ -66,31 +117,28 @@
   color: var(--color-primary);
 }
 
-.info-item.setting-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  background-color: #f7fafd;
-  border-radius: 20px;
-  height: 48px;
-  gap: 1.5rem;
-  color: var(--color-primary);
+/* Строки настроек */
+.setting-row {
   width: 500px;
+  max-width: 500px;
+  height: 48px;
+  border-radius: 20px;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
   box-sizing: border-box;
-  margin: 0.5rem 0;
+  justify-content: space-between;
 }
 
-.info-item.setting-row > div {
+.setting-row > div {
   display: flex;
   align-items: center;
   gap: 1rem;
-  flex: 1 1 auto;
+  flex: 1;
   min-width: 0;
   overflow: hidden;
 }
 
-.info-item.setting-row .label {
+.setting-row .label {
   flex-shrink: 0;
   white-space: nowrap;
   font-weight: 600;
@@ -98,74 +146,43 @@
   width: 100px;
 }
 
-.info-item.setting-row .value {
-  flex-grow: 1;
+.setting-row .value {
+  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 500;
   color: var(--color-primary);
-  min-width: 0;
+  text-align: left;
 }
 
-.info-item.setting-row .btn-change {
-
+/* Кнопки */
+.btn-change {
   flex-shrink: 0;
-  padding: 0.4rem 1.2rem;
+  width: 140px;
+  height: 36px;
+  padding: 0;
   font-weight: 600;
   font-size: 1rem;
   border-radius: 20px;
   background-color: var(--color-primary);
   color: var(--color-white);
   border: none;
-  width: 140px;
-  height: 36px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.info-item.setting-row .btn-change:hover {
+.btn-change:hover {
   background-color: var(--color-accent);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
 
-.right-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  width: 650px;
-  height: 420px;
-}
-
-.right-cards > div {
-  background: var(--color-white);
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 0 20px var(--color-accent);
-  color: var(--color-primary);
-  height: 196px;
-  text-align: center;
-}
-
-/* Отдельный класс для карточки настроек с одинаковыми отступами */
-.settings-card {
-  background: var(--color-white);
-  border-radius: 20px;
-  padding: 1rem; /* Одинаковые отступы со всех сторон */
-  box-shadow: 0 0 20px var(--color-accent);
-  color: var(--color-primary);
-  height: 196px;
-  text-align: center;
-}
-
-.settings-card .info-list {
-  width: 100%;
-  max-width: none; /* Убираем ограничение ширины */
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Центрируем элементы по горизонтали */
+h3{
+  margin: 0.5rem;
 }
