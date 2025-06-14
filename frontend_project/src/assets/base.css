@@ -6,6 +6,9 @@
   --color-white: white;
   --color-black: black;
   --color-black-shadow: rgba(0, 0, 0, 0.5);
+  --color-green: #4caf50;
+  --color-yellow: #ffc107;
+  --color-red: #f44336;
 }
 
 /*:root {*/

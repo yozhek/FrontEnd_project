@@ -92,6 +92,10 @@ function shuffle(array) {
   return array
 }
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export default {
   name: 'GameView',
   data() {
@@ -141,19 +145,34 @@ export default {
       }
     },
     async loadQuestions() {
-      let sortBy, minVoteCount, maxVoteCount
+      let sortBy, minVoteCount
+      sortBy = 'popularity.desc'
+      minVoteCount = 5
+      let totalPages = await this.fetchTotalPages(sortBy, minVoteCount)
+      let pagesForGame = []
       if (this.difficulty === 'easy') {
-        sortBy = 'popularity.desc'
-        minVoteCount = 500
+        let pagesEasyLevel = totalPages * 0.2
+        for (let i = 0; i < 10; i++) {
+          pagesForGame.push(getRandomInt(1, pagesEasyLevel));
+        }
       } else if (this.difficulty === 'medium') {
-        sortBy = 'popularity.desc'
-        minVoteCount = 100
-        maxVoteCount = 500
+        let minPageMediumLevel = totalPages * 0.2 + 1
+        let maxPageMediumLevel = totalPages * 0.5
+        for (let i = 0; i < 10; i++) {
+          pagesForGame.push(getRandomInt(minPageMediumLevel,maxPageMediumLevel));
+        }
       } else {
-        sortBy = 'popularity.asc'
-        minVoteCount = 50
+        let minPageHardLevel = totalPages * 0.5 + 1
+        for (let i = 0; i < 10; i++) {
+          pagesForGame.push(getRandomInt(minPageHardLevel,totalPages));
+        }
       }
-      let movies = await this.fetchMovies(sortBy, minVoteCount, maxVoteCount)
+      let movies = []
+      for (let i = 0; i < 10; i++){
+        const data = await this.fetchMovies(sortBy, minVoteCount, pagesForGame[i]);
+        movies.push(data)
+      }
+      // let movies = await this.fetchMovies(sortBy, minVoteCount, page)
       let allMovies = movies;
       movies = shuffle(movies).slice(0, this.totalQuestions)
       this.questions = await Promise.all(
@@ -176,14 +195,17 @@ export default {
         }),
       )
     },
-    async fetchMovies(sortBy, minVoteCount, maxVoteCount) {
-      let url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-US&sort_by=${sortBy}&vote_count.gte=${minVoteCount}`
-      if (maxVoteCount !== null && maxVoteCount !== undefined) {
-        url += `&vote_count.lte=${maxVoteCount}`;
-      }
+    async fetchMovies(sortBy, minVoteCount, page) {
+      let url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-US&page=${page}&sort_by=${sortBy}&vote_count.gte=${minVoteCount}` //https://api.themoviedb.org/3/discover/movie?&language=en-US&page=1&sort_by=popularity.desc&vote_average.gte=5'
       const response = await fetch(url)
       const data = await response.json()
       return data.results.filter((m) => m.backdrop_path && m.title)
+    },
+    async fetchTotalPages(sortBy, minVoteCount) {
+      let url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-US&page=1&sort_by=${sortBy}&vote_count.gte=${minVoteCount}`
+      const response = await fetch(url)
+      const data = await response.json()
+      return data.total_pages
     },
     async fetchScreenshots(movieId) {
       const url = `${BASE_URL}/movie/${movieId}/images?api_key=${API_KEY}`
@@ -341,17 +363,17 @@ h2{
 }
 
 .easy {
-  background: #4caf50;
+  background: var(--color-green);
   color: white;
 }
 
 .medium {
-  background: #ffc107;
-  color: black;
+  background: var(--color-yellow);
+  color: var(--color-black);
 }
 .hard {
-  background: #f44336;
-  color: white;
+  background: var(--color-red);
+  color: var(--color-white);
 }
 
 .game-interface {
@@ -487,10 +509,10 @@ h2{
   font-size: 1.3rem;
 }
 .review-info .wrong {
-  color: #f44336;
+  color: var(--color-red);
 }
 .review-info .correct {
-  color: #4caf50;
+  color: var(--color-green);
 }
 
 </style>
