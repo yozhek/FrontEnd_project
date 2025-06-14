@@ -68,13 +68,30 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { storeToRefs } from 'pinia'
 
-const user = reactive({
-  email: 'admin@gmail.com',
-  nickname: 'MovieKing',
-  quizzesCompleted: 12,
-  totalPoints: 875,
+defineOptions({ name: 'ProfilePage' })
+
+const authStore = useAuthStore()
+const { currentUserProfile } = storeToRefs(authStore)
+
+const user = computed(() => {
+  if (!currentUserProfile.value) {
+    return {
+      email: 'Not authorized',
+      nickname: 'Guest',
+      quizzesCompleted: '-',
+      totalPoints: '-',
+    }
+  }
+  return {
+    email: currentUserProfile.value.email,
+    nickname: currentUserProfile.value.nickname,
+    quizzesCompleted: '-', // Можно заменить на реальные данные, если появятся
+    totalPoints: '-', // Можно заменить на реальные данные, если появятся
+  }
 })
 </script>
 

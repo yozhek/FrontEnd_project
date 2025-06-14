@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { 
+import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -8,35 +8,45 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
+import { createUserProfile, getUserProfile } from '@/services/userProfile';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
+    userProfile: null,
     loading: false,
     error: null
   }),
 
   getters: {
     isAuthenticated: (state) => !!state.user,
-    currentUser: (state) => state.user
+    currentUser: (state) => state.user,
+    currentUserProfile: (state) => state.userProfile
   },
 
   actions: {
     async init() {
       return new Promise((resolve) => {
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
           this.user = user;
+          if (user) {
+            this.userProfile = await getUserProfile(user.uid);
+          } else {
+            this.userProfile = null;
+          }
           resolve(user);
         });
       });
     },
 
-    async register(email, password) {
+    async register(email, password, nickname) {
       this.loading = true;
       this.error = null;
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         this.user = userCredential.user;
+        await createUserProfile(userCredential.user.uid, { email, nickname });
+        this.userProfile = { email, nickname };
         return userCredential.user;
       } catch (error) {
         this.error = error.message;
@@ -52,6 +62,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         this.user = userCredential.user;
+        this.userProfile = await getUserProfile(userCredential.user.uid);
         return userCredential.user;
       } catch (error) {
         this.error = error.message;
@@ -68,6 +79,7 @@ export const useAuthStore = defineStore('auth', {
         const provider = new GoogleAuthProvider();
         const userCredential = await signInWithPopup(auth, provider);
         this.user = userCredential.user;
+        this.userProfile = await getUserProfile(userCredential.user.uid);
         return userCredential.user;
       } catch (error) {
         this.error = error.message;
@@ -83,6 +95,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         await signOut(auth);
         this.user = null;
+        this.userProfile = null;
       } catch (error) {
         this.error = error.message;
         throw error;
@@ -91,4 +104,4 @@ export const useAuthStore = defineStore('auth', {
       }
     }
   }
-}); 
+});

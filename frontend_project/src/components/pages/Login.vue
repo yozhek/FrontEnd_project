@@ -47,6 +47,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+defineOptions({ name: 'LoginPage' })
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -62,7 +63,25 @@ const handleSubmit = async () => {
     await authStore.login(email.value, password.value)
     router.push('/profile')
   } catch (err) {
-    error.value = err.message
+    if (err.code === 'auth/wrong-password') {
+      error.value = 'Incorrect password. Please try again.'
+    } else if (err.code === 'auth/user-not-found') {
+      error.value = 'No user found with this email.'
+    } else if (err.code === 'auth/invalid-email') {
+      error.value = 'Please enter a valid email address.'
+    } else if (err.code === 'auth/invalid-credential') {
+      const { getDocs, collection, query, where } = await import('firebase/firestore')
+      const { db } = await import('@/firebase/config')
+      const q = query(collection(db, 'users'), where('email', '==', email.value))
+      const querySnapshot = await getDocs(q)
+      if (!querySnapshot.empty) {
+        error.value = 'Incorrect password. Please try again.'
+      } else {
+        error.value = 'No user found with this email.'
+      }
+    } else {
+      error.value = err.message
+    }
   } finally {
     loading.value = false
   }
@@ -73,7 +92,11 @@ const handleGoogleLogin = async () => {
   loading.value = true
   try {
     await authStore.loginWithGoogle()
-    router.push('/profile')
+    if (!authStore.userProfile || !authStore.userProfile.nickname) {
+      router.push({ name: 'SetNickname' })
+    } else {
+      router.push('/profile')
+    }
   } catch (err) {
     error.value = err.message
   } finally {
