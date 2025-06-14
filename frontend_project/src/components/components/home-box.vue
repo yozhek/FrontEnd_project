@@ -27,7 +27,7 @@
       </RouterLink>
 
       <RouterLink to="/profile" v-if="info === 'profile' ">
-        <button>Go to Profile</button>
+        <button>Profile</button>
       </RouterLink>
 
       <RouterLink to="/login" v-if="info === 'login' ">
