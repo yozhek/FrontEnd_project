@@ -130,7 +130,9 @@
 
 
 main {
-  min-height: 81vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 83vh;
   width: 1100px;
   margin: 20px;
 }

@@ -90,7 +90,7 @@ export default {
   width: 50%;
   background-color: var(--color-primary);
   border-radius: 20px;
-  box-shadow: 0 0 30px var(--color-accent);
+  box-shadow: 0 0 40px var(--color-black-shadow);
   transition: transform 0.5s ease;
 }
 
