@@ -1,6 +1,17 @@
 <template>
   <div class="main-info">
-    <div class="profile-page">
+    <!-- Если не авторизован -->
+    <div v-if="!currentUserProfile" class="auth-form">
+      <h2 class="auth-title">Profile is available only for authorized users</h2>
+      <p class="auth-description">Please log in or create an account to view your profile and achievements.</p>
+      <div class="buttons">
+        <button class="login-btn" @click="goToLogin">Login</button>
+        <button class="register-btn" @click="goToRegister">Create Account</button>
+      </div>
+    </div>
+
+    <!-- Если авторизован -->
+    <div v-else class="profile-page">
       <!-- Левая карточка с фото и никнеймом -->
       <div class="profile-card">
         <div class="avatar-wrapper">
@@ -71,11 +82,13 @@
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
 defineOptions({ name: 'ProfilePage' })
 
 const authStore = useAuthStore()
 const { currentUserProfile } = storeToRefs(authStore)
+const router = useRouter()
 
 const user = computed(() => {
   if (!currentUserProfile.value) {
@@ -93,11 +106,16 @@ const user = computed(() => {
     totalPoints: '-', // Можно заменить на реальные данные, если появятся
   }
 })
+
+function goToLogin() {
+  router.push('/login')
+}
+function goToRegister() {
+  router.push('/registration')
+}
 </script>
-
-
 
 <style scoped>
 @import '@/assets/profile.css';
-
+@import '@/assets/auth-forms.css';
 </style>

@@ -10,6 +10,10 @@
           <li>Complete all questions to see your final score</li>
           <li>Your achievements will be saved for the leaderboard</li>
         </ul>
+        <ul v-if="!isAuthenticated" >
+          <li class="progress-warning">Your progress will not be saved.</li>
+          <li class="progress-warning">To save your progress, please log in.</li>
+        </ul>
         <button class="play-button" @click="showDifficulty = true">Play Now</button>
       </div>
     </div>
@@ -83,6 +87,9 @@
 const API_KEY = '563f70945fc2525450acc89c06c8c972'
 const BASE_URL = 'https://api.themoviedb.org/3'
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original'
+
+import { useAuthStore } from '@/stores/auth'
+import { storeToRefs } from 'pinia'
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -226,6 +233,10 @@ export default {
   computed: {
     score() {
       return Math.round((this.correctAnswers / this.totalQuestions) * 100)
+    },
+    isAuthenticated() {
+      const authStore = useAuthStore()
+      return storeToRefs(authStore).isAuthenticated.value
     },
   },
 }
@@ -491,6 +502,11 @@ h2{
 }
 .review-info .correct {
   color: #4caf50;
+}
+
+.progress-warning {
+  color: #f44336;
+  font-weight: 600;
 }
 
 </style>
