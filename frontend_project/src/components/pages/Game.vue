@@ -263,7 +263,7 @@ export default {
 }
 
 .rules-content:hover {
-  transform: scale(1.05);
+  transform: scale(1.01);
   box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 

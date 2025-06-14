@@ -17,8 +17,8 @@
 }
 
 .auth-form:hover {
-  transform: scale(1.03);
-  box-shadow: 0 10px 25px var(--color-black-shadow);
+  transform: scale(1.01);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 
 .auth-title {
