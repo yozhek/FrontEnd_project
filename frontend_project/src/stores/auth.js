@@ -6,7 +6,10 @@ import {
   GoogleAuthProvider,
   signOut,
   onAuthStateChanged,
-  sendEmailVerification
+  sendEmailVerification,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
 import { getUserProfile } from '@/services/userProfile';
@@ -119,8 +122,34 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async resendVerificationEmail() {
-      if (auth.currentUser) {
+      try {
         await sendEmailVerification(auth.currentUser);
+      } catch (error) {
+        this.error = error.message;
+        throw error;
+      }
+    },
+
+    async changePassword(oldPassword, newPassword) {
+      this.loading = true;
+      this.error = null;
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          throw new Error('No user is currently signed in');
+        }
+
+        // Reauthenticate user before changing password
+        const credential = EmailAuthProvider.credential(user.email, oldPassword);
+        await reauthenticateWithCredential(user, credential);
+
+        // Change password
+        await updatePassword(user, newPassword);
+      } catch (error) {
+        this.error = error.message;
+        throw error;
+      } finally {
+        this.loading = false;
       }
     }
   }
