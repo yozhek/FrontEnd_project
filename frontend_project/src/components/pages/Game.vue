@@ -136,10 +136,7 @@ export default {
       this.selectedAnswer = null
       this.userAnswers = []
       try {
-        console.log('Test')
         await this.loadQuestions()
-        console.log('Questions:', this.questions)
-        console.log('Current question:', this.currentQuestion)
         this.currentQuestion = this.questions[0]
         this.showGame = true
       } catch {
@@ -208,23 +205,13 @@ export default {
         }
       }
 
-
-      console.log('nactene filmy:')
-      console.log(movies)
-
-
-      // let movies = await this.fetchMovies(sortBy, minVoteCount, page)
       let allMovies = movies;
       movies = shuffle(movies).slice(0, this.totalQuestions)
       this.questions = await Promise.all(
         movies.map(async (movie) => {
 
-          console.log('jednotlive filmy:')
-          console.log(movie)
-
           let numOfEL = movie.length
           let randIndx = getRandomInt(0, numOfEL-1)
-          console.log(randIndx)
 
           const screenshots = await this.fetchScreenshots(movie[randIndx].id)
           const screenshot =
@@ -232,6 +219,7 @@ export default {
               ? IMAGE_BASE_URL + screenshots[0].file_path
               : IMAGE_BASE_URL + movie[randIndx].backdrop_path
           let options = [movie[randIndx].title]
+
           let otherMovies = shuffle(allMovies.map(page =>
             page.filter(film => film.id !== movie[randIndx].id)
           )).slice(0, 3)
@@ -252,6 +240,7 @@ export default {
         }),
       )
     },
+
     async fetchMovies(sortBy, minVoteCount, maxVoteCount, page) {
       let url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-US&page=${page}&sort_by=${sortBy}&vote_count.gte=${minVoteCount}` //https://api.themoviedb.org/3/discover/movie?&language=en-US&page=1&sort_by=popularity.desc&vote_average.gte=5'
       if (maxVoteCount !== null) {
