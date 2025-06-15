@@ -45,12 +45,15 @@ export const useAuthStore = defineStore('auth', {
       });
     },
 
-    async register(email, password) {
+    async register(email, password, nickname, score) {
       this.loading = true;
       this.error = null;
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await sendEmailVerification(userCredential.user);
+        this.user = userCredential.user;
+        await createUserProfile(userCredential.user.uid, { email, nickname, score});
+        this.userProfile = { email, nickname, score};
         return userCredential.user;
       } catch (error) {
         this.error = error.message;

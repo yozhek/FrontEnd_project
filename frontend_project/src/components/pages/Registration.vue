@@ -76,6 +76,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
+const score = ref(0)
 const router = useRouter()
 const authStore = useAuthStore()
 const username = ref('')
@@ -124,6 +125,8 @@ const handleSubmit = async () => {
     showVerifyWait.value = true
     verificationSent.value = true
     startVerificationCheck(user, username.value)
+    await authStore.register(email.value, password.value, username.value, score.value)
+    router.push('/profile')
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {
       error.value = 'This email is already in use.'

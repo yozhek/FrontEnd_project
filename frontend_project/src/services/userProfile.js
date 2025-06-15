@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 
 export async function createUserProfile(userId, profile) {
@@ -14,4 +14,9 @@ export async function getUserProfile(userId) {
   } else {
     return null;
   }
+}
+
+export async function updateUserScore(userId, delta) {
+  const userRef = doc(db, 'users', userId)
+  await updateDoc(userRef, { score: increment(delta) })
 }
