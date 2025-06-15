@@ -1,4 +1,9 @@
 <template>
+  <div v-if="loading" class="loading-modal">
+    <div class="spinner"></div>
+    <h2 class="loading-text">Loading game...</h2>
+  </div>
+
   <div class="game-container">
     <!-- Game Rules Section -->
     <div class="rules-section" v-if="!showGame && !showDifficulty && !showResults">
@@ -186,7 +191,7 @@ export default {
 
         if (this.difficulty === 'easy') {
           sortBy = 'popularity.desc'
-          minVoteCount = 350
+          minVoteCount = 300
           maxVoteCount = null
         } else if (this.difficulty === 'medium') {
           sortBy ='popularity.desc'
@@ -303,6 +308,34 @@ export default {
 </script>
 
 <style scoped>
+
+.loading-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.spinner {
+  width: 60px; height: 60px;
+  border: 8px solid var(--color-white);
+  border-top: 8px solid var(--color-accent);
+  border-radius: 100px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+
+}
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+.loading-text{
+  color: var(--color-white);
+}
+
 .game-container {
   display: flex;
   flex-direction: column;
@@ -375,10 +408,7 @@ h2{
 
 .difficulty-modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
