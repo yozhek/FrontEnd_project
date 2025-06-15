@@ -46,12 +46,13 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
 import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 const authStore = useAuthStore()
 const { isAuthenticated } = storeToRefs(authStore)
 const router = useRouter()
+
 
 onMounted(() => {
   authStore.init()
@@ -208,4 +209,5 @@ main {
   color: var(--color-accent);
   transform: scale(1.1) translateY(-2px);
 }
+
 </style>

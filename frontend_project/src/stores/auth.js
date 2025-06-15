@@ -5,10 +5,11 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  sendEmailVerification
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
-import { createUserProfile, getUserProfile } from '@/services/userProfile';
+import { getUserProfile } from '@/services/userProfile';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -19,7 +20,7 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.user,
+    isAuthenticated: (state) => !!state.user && state.user.emailVerified,
     currentUser: (state) => state.user,
     currentUserProfile: (state) => state.userProfile
   },
@@ -28,25 +29,25 @@ export const useAuthStore = defineStore('auth', {
     async init() {
       return new Promise((resolve) => {
         onAuthStateChanged(auth, async (user) => {
-          this.user = user;
-          if (user) {
+          if (user && user.emailVerified) {
+            this.user = user;
             this.userProfile = await getUserProfile(user.uid);
+            resolve(user);
           } else {
+            this.user = null;
             this.userProfile = null;
+            resolve(null);
           }
-          resolve(user);
         });
       });
     },
 
-    async register(email, password, nickname) {
+    async register(email, password) {
       this.loading = true;
       this.error = null;
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        this.user = userCredential.user;
-        await createUserProfile(userCredential.user.uid, { email, nickname });
-        this.userProfile = { email, nickname };
+        await sendEmailVerification(userCredential.user);
         return userCredential.user;
       } catch (error) {
         this.error = error.message;
@@ -61,6 +62,12 @@ export const useAuthStore = defineStore('auth', {
       this.error = null;
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        if (!userCredential.user.emailVerified) {
+          await signOut(auth);
+          this.user = null;
+          this.userProfile = null;
+          throw { code: 'auth/email-not-verified', message: 'Подтвердите email для входа.' };
+        }
         this.user = userCredential.user;
         this.userProfile = await getUserProfile(userCredential.user.uid);
         return userCredential.user;
@@ -101,6 +108,19 @@ export const useAuthStore = defineStore('auth', {
         throw error;
       } finally {
         this.loading = false;
+      }
+    },
+
+    async checkEmailVerified() {
+      if (!auth.currentUser) return false;
+      await auth.currentUser.reload();
+      this.user = auth.currentUser;
+      return auth.currentUser.emailVerified;
+    },
+
+    async resendVerificationEmail() {
+      if (auth.currentUser) {
+        await sendEmailVerification(auth.currentUser);
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="main-info">
-    <div class="auth-form">
+    <div v-if="!showVerifyWait" class="auth-form">
       <h2 class="auth-title">Create Your Account</h2>
       <p class="auth-description">Join MovieGuess and start your movie guessing adventure!</p>
       <form @submit.prevent="handleSubmit">
@@ -54,11 +54,25 @@
         Continue with Google
       </button>
     </div>
+    <div v-else class="auth-form">
+      <h2 class="auth-title">Verify your email</h2>
+      <p class="auth-description">
+        A verification email has been sent to <b>{{ email }}</b>.<br>
+        Please check your inbox and click the link to complete registration.
+      </p>
+      <div v-if="verifyLoading" class="loading-message" style="text-align:center;margin-bottom:1.5rem;">Waiting for verification...</div>
+      <div v-if="verifyError" class="error-message">{{ verifyError }}</div>
+      <div class="buttons">
+        <button class="login-btn" @click="resendVerification" :disabled="verifyLoading" style="margin-bottom:0;">Resend email</button>
+        <button class="register-btn" @click="cancelVerification" :disabled="verifyLoading">Cancel</button>
+      </div>
+      <div v-if="verificationSent" class="success-message" style="text-align:center;margin-top:1rem;color:var(--color-primary);font-size:1.1rem;">Verification email sent!</div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -71,18 +85,22 @@ const error = ref(null)
 const loading = ref(false)
 const emailError = ref(null)
 const nicknameError = ref(null)
+const showVerifyWait = ref(false)
+const verifyLoading = ref(false)
+const verifyError = ref(null)
+const verifyInterval = ref(null)
+const verificationSent = ref(false)
 
 defineOptions({ name: 'RegistrationPage' })
 
 function validateEmail(email) {
-  // Простая email-маска
+  // Simple email mask
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return re.test(email)
 }
 
 async function isNicknameTaken(nickname) {
-  // Проверяем уникальность никнейма по всем профилям
-  // Firestore не поддерживает прямой поиск по полю без индекса, но для простоты делаем запрос
+  // Check nickname uniqueness among all profiles
   const { getDocs, collection, query, where } = await import('firebase/firestore')
   const { db } = await import('@/firebase/config')
   const q = query(collection(db, 'users'), where('nickname', '==', nickname))
@@ -102,8 +120,10 @@ const handleSubmit = async () => {
       error.value = 'This nickname is already taken. Please choose another one.'
       return
     }
-    await authStore.register(email.value, password.value, username.value)
-    router.push('/profile')
+    const user = await authStore.register(email.value, password.value)
+    showVerifyWait.value = true
+    verificationSent.value = true
+    startVerificationCheck(user, username.value)
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {
       error.value = 'This email is already in use.'
@@ -156,8 +176,76 @@ async function onNicknameInput() {
     nicknameError.value = null
   }
 }
+
+async function startVerificationCheck(user, nickname) {
+  verifyLoading.value = true
+  verifyError.value = null
+  verifyInterval.value = setInterval(async () => {
+    const verified = await authStore.checkEmailVerified()
+    if (verified) {
+      clearInterval(verifyInterval.value)
+      // Create profile only after email is verified
+      const { createUserProfile } = await import('@/services/userProfile')
+      await createUserProfile(user.uid, { email: user.email, nickname })
+      // Реальный re-login для реактивности
+      const { signInWithEmailAndPassword, signOut } = await import('firebase/auth')
+      const { auth } = await import('@/firebase/config')
+      await signOut(auth)
+      await signInWithEmailAndPassword(auth, user.email, password.value)
+      await authStore.init()
+      router.push('/profile')
+    }
+  }, 4000)
+}
+
+const resendVerification = async () => {
+  verifyError.value = null
+  try {
+    await authStore.resendVerificationEmail()
+    verificationSent.value = true
+  } catch {
+    verifyError.value = 'Error sending email. Please try again later.'
+  }
+}
+
+const cancelVerification = async () => {
+  // Log out user and redirect to login
+  await authStore.logout()
+  username.value = ''
+  email.value = ''
+  password.value = ''
+  error.value = null
+  loading.value = false
+  emailError.value = null
+  nicknameError.value = null
+  showVerifyWait.value = false
+  verifyLoading.value = false
+  verifyError.value = null
+  verifyInterval.value = null
+  verificationSent.value = false
+  router.push('/login')
+}
+
+onMounted(() => {
+  // Clear interval on unmount
+  return () => {
+    if (verifyInterval.value) clearInterval(verifyInterval.value)
+  }
+})
 </script>
 
 <style scoped>
 @import '@/assets/auth-forms.css';
+.success-message {
+  text-align: center;
+  color: var(--color-primary);
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+.loading-message {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
 </style>

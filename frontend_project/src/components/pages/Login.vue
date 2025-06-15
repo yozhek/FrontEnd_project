@@ -63,7 +63,9 @@ const handleSubmit = async () => {
     await authStore.login(email.value, password.value)
     router.push('/profile')
   } catch (err) {
-    if (err.code === 'auth/wrong-password') {
+    if (err.code === 'auth/email-not-verified') {
+      error.value = 'Please verify your email before logging in. Check your inbox and click the verification link.'
+    } else if (err.code === 'auth/wrong-password') {
       error.value = 'Incorrect password. Please try again.'
     } else if (err.code === 'auth/user-not-found') {
       error.value = 'No user found with this email.'
