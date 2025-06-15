@@ -24,12 +24,24 @@
         <span v-else-if="idx === 1" class="medal silver">🥈</span>
         <span v-else-if="idx === 2" class="medal bronze">🥉</span>
       </li>
+      <template v-if="isAuthenticated">
+        <div class="divider"></div>
+        <li class="leader-item">
+          <span class="place">228</span>
+          <span class="nickname">You</span>
+          <span class="score">0 pts</span>
+        </li>
+      </template>
     </ul>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const isAuthenticated = computed(() => authStore.isAuthenticated)
 
 const sortOptions = [
   { label: 'Day', value: 'day' },
@@ -198,5 +210,13 @@ const sortedLeaders = computed(() => {
   .leaderboard-title {
     font-size: 2rem;
   }
+}
+.divider {
+  width: 100%;
+  height: 2px;
+  background: var(--color-black-shadow);
+  margin: 1rem 0;
+  opacity: 0.3;
+  border-radius: 20px;
 }
 </style>
