@@ -100,6 +100,7 @@ export default {
   name: 'GameView',
   data() {
     return {
+      APIrestriction: 500,
       showDifficulty: false,
       showGame: false,
       showResults: false,
@@ -135,7 +136,10 @@ export default {
       this.selectedAnswer = null
       this.userAnswers = []
       try {
+        console.log('Test')
         await this.loadQuestions()
+        console.log('Questions:', this.questions)
+        console.log('Current question:', this.currentQuestion)
         this.currentQuestion = this.questions[0]
         this.showGame = true
       } catch {
@@ -145,58 +149,114 @@ export default {
       }
     },
     async loadQuestions() {
-      let sortBy, minVoteCount
-      sortBy = 'popularity.desc'
-      minVoteCount = 5
-      let totalPages = await this.fetchTotalPages(sortBy, minVoteCount)
+      let sortBy, minVoteCount, maxVoteCount
       let pagesForGame = []
-      if (this.difficulty === 'easy') {
-        let pagesEasyLevel = totalPages * 0.2
-        for (let i = 0; i < 10; i++) {
-          pagesForGame.push(getRandomInt(1, pagesEasyLevel));
-        }
-      } else if (this.difficulty === 'medium') {
-        let minPageMediumLevel = totalPages * 0.2 + 1
-        let maxPageMediumLevel = totalPages * 0.5
-        for (let i = 0; i < 10; i++) {
-          pagesForGame.push(getRandomInt(minPageMediumLevel,maxPageMediumLevel));
-        }
-      } else {
-        let minPageHardLevel = totalPages * 0.5 + 1
-        for (let i = 0; i < 10; i++) {
-          pagesForGame.push(getRandomInt(minPageHardLevel,totalPages));
-        }
-      }
       let movies = []
-      for (let i = 0; i < 10; i++){
-        const data = await this.fetchMovies(sortBy, minVoteCount, pagesForGame[i]);
-        movies.push(data)
+
+      if (this.APIrestriction === null || this.APIrestriction === undefined) {
+
+        let totalPages = await this.fetchTotalPages(sortBy, minVoteCount)
+        minVoteCount = 5
+        sortBy = 'popularity.desc'
+
+        if (this.difficulty === 'easy') {
+          let pagesEasyLevel = totalPages * 0.2
+          for (let i = 0; i < 10; i++) {
+            pagesForGame.push(getRandomInt(1, pagesEasyLevel));
+          }
+        } else if (this.difficulty === 'medium') {
+          let minPageMediumLevel = totalPages * 0.2 + 1
+          let maxPageMediumLevel = totalPages * 0.5
+          for (let i = 0; i < 10; i++) {
+            pagesForGame.push(getRandomInt(minPageMediumLevel, maxPageMediumLevel));
+          }
+        } else {
+          let minPageHardLevel = totalPages * 0.5 + 1
+          for (let i = 0; i < 10; i++) {
+            pagesForGame.push(getRandomInt(minPageHardLevel, totalPages));
+          }
+        }
+
+        for (let i = 0; i < 10; i++){
+          const data = await this.fetchMovies(sortBy, minVoteCount, null ,pagesForGame[i]);
+          movies.push(data)
+        }
       }
+      else {
+        for (let i = 0; i < 10; i++) {
+          pagesForGame.push(getRandomInt(1, this.APIrestriction));
+        }
+
+        if (this.difficulty === 'easy') {
+          sortBy = 'popularity.desc'
+          minVoteCount = 100
+          maxVoteCount = null
+        } else if (this.difficulty === 'medium') {
+          sortBy ='popularity.desc'
+          minVoteCount = 5
+          maxVoteCount = 99
+        } else {
+          sortBy = 'popularity.asc'
+          minVoteCount = 5
+          maxVoteCount = null
+        }
+
+        for (let i = 0; i < 10; i++){
+          let actPage = pagesForGame[i]
+          const data = await this.fetchMovies(sortBy, minVoteCount, maxVoteCount , actPage);
+          movies.push(data)
+        }
+      }
+
+
+      console.log('nactene filmy:')
+      console.log(movies)
+
+
       // let movies = await this.fetchMovies(sortBy, minVoteCount, page)
       let allMovies = movies;
       movies = shuffle(movies).slice(0, this.totalQuestions)
       this.questions = await Promise.all(
         movies.map(async (movie) => {
-          const screenshots = await this.fetchScreenshots(movie.id)
+
+          console.log('jednotlive filmy:')
+          console.log(movie)
+
+          let numOfEL = movie.length
+          let randIndx = getRandomInt(0, numOfEL-1)
+          console.log(randIndx)
+
+          const screenshots = await this.fetchScreenshots(movie[randIndx].id)
           const screenshot =
             screenshots.length > 0
               ? IMAGE_BASE_URL + screenshots[0].file_path
-              : IMAGE_BASE_URL + movie.backdrop_path
-          let options = [movie.original_title]
-          let otherMovies = shuffle(allMovies.filter((m) => m.id !== movie.id)).slice(0, 3)
-          options = options.concat(otherMovies.map((m) => m.original_title))
+              : IMAGE_BASE_URL + movie[randIndx].backdrop_path
+          let options = [movie[randIndx].title]
+          let otherMovies = shuffle(allMovies.map(page =>
+            page.filter(film => film.id !== movie[randIndx].id)
+          )).slice(0, 3)
+
+          options = options.concat(otherMovies.map((m) => {
+            let numOfELOther = m.length
+            let randIndxOther = getRandomInt(0, numOfELOther-1)
+            return m[randIndxOther].title
+          }))
+
           options = shuffle(options)
           return {
             screenshot,
             options,
-            correctAnswer: movie.original_title,
-            original_title: movie.original_title,
+            correctAnswer: movie[randIndx].title,
+            original_title: movie[randIndx].title,
           }
         }),
       )
     },
-    async fetchMovies(sortBy, minVoteCount, page) {
+    async fetchMovies(sortBy, minVoteCount, maxVoteCount, page) {
       let url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-US&page=${page}&sort_by=${sortBy}&vote_count.gte=${minVoteCount}` //https://api.themoviedb.org/3/discover/movie?&language=en-US&page=1&sort_by=popularity.desc&vote_average.gte=5'
+      if (maxVoteCount !== null) {
+        url += `&vote_count.lte=${maxVoteCount}`
+      }
       const response = await fetch(url)
       const data = await response.json()
       return data.results.filter((m) => m.backdrop_path && m.title)
@@ -208,7 +268,7 @@ export default {
       return data.total_pages
     },
     async fetchScreenshots(movieId) {
-      const url = `${BASE_URL}/movie/${movieId}/images?api_key=${API_KEY}`
+      const url = `${BASE_URL}/movie/${movieId}/images?api_key=${API_KEY}` // https://api.themoviedb.org/3/movie/9542/images
       const response = await fetch(url)
       const data = await response.json()
       return data.backdrops || []
