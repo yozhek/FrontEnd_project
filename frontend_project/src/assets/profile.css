@@ -19,11 +19,17 @@
 .profile-card {
   background: var(--color-white);
   border-radius: 20px;
-  box-shadow: 0 0 20px var(--color-accent);
+  box-shadow: 0 0 20px var(--color-black-shadow);
   color: var(--color-primary);
   width: 50%;
   height: 420px;
   text-align: center;
+  transition: all 0.5s;
+}
+
+.profile-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 
 .avatar-wrapper {
@@ -59,21 +65,30 @@
 .quiz-card {
   background: var(--color-white);
   border-radius: 20px;
-  box-shadow: 0 0 20px var(--color-accent);
+  box-shadow: 0 0 20px var(--color-black-shadow);
   color: var(--color-primary);
   text-align: center;
   height: 50%;
+  transition: all 0.5s;
+}
+.quiz-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
 }
 
 .settings-card {
   background: var(--color-white);
   border-radius: 20px;
-  box-shadow: 0 0 20px var(--color-accent);
+  box-shadow: 0 0 20px var(--color-black-shadow);
   color: var(--color-primary);
   text-align: center;
   height: 50%;
+  transition: all 0.5s;
 }
-
+.settings-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 10px 30px var(--color-black-shadow);
+}
 /* Списки информации */
 .info-list {
   display: flex;

@@ -82,17 +82,17 @@ const hintOptions = [
   {
     key: "year",
     label: "Year of release",
-    prompt: `Give a hint about the release year of the film "${props.movieTitle}". Do not mention the title.`,
+    prompt: `Give a year of the release year of the film "${props.movieTitle}". Do not mention the title.`,
   },
   {
     key: "genre",
     label: "Genre",
-    prompt: `Give a hint about the genre of the film "${props.movieTitle}". Do not mention the title.`,
+    prompt: `Give the genre of the film "${props.movieTitle}". Do not mention the title.`,
   },
   {
     key: "actors",
     label: "Main actors",
-    prompt: `Give a hint about some main actors of the film "${props.movieTitle}". Do not mention the title.`,
+    prompt: `Give some main actors of the film "${props.movieTitle}". Do not mention the title.`,
   },
   {
     key: "plot",
@@ -102,7 +102,7 @@ const hintOptions = [
   {
     key: "awards",
     label: "Awards or records",
-    prompt: `Give a hint about any awards or records related to the film "${props.movieTitle}". Do not mention the title.`,
+    prompt: `Give an awards or records related to the film "${props.movieTitle}". Do not mention the title.`,
   },
 ];
 
