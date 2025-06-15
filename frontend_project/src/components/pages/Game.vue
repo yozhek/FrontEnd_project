@@ -158,47 +158,47 @@ export default {
 
         if (this.difficulty === 'easy') {
           let pagesEasyLevel = totalPages * 0.2
-          for (let i = 0; i < 10; i++) {
+          for (let i = 0; i < this.totalQuestions; i++) {
             pagesForGame.push(getRandomInt(1, pagesEasyLevel));
           }
         } else if (this.difficulty === 'medium') {
           let minPageMediumLevel = totalPages * 0.2 + 1
           let maxPageMediumLevel = totalPages * 0.5
-          for (let i = 0; i < 10; i++) {
+          for (let i = 0; i < this.totalQuestions; i++) {
             pagesForGame.push(getRandomInt(minPageMediumLevel, maxPageMediumLevel));
           }
         } else {
           let minPageHardLevel = totalPages * 0.5 + 1
-          for (let i = 0; i < 10; i++) {
+          for (let i = 0; i < this.totalQuestions; i++) {
             pagesForGame.push(getRandomInt(minPageHardLevel, totalPages));
           }
         }
 
-        for (let i = 0; i < 10; i++){
+        for (let i = 0; i < this.totalQuestions; i++){
           const data = await this.fetchMovies(sortBy, minVoteCount, null ,pagesForGame[i]);
           movies.push(data)
         }
       }
       else {
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < this.totalQuestions; i++) {
           pagesForGame.push(getRandomInt(1, this.APIrestriction));
         }
 
         if (this.difficulty === 'easy') {
           sortBy = 'popularity.desc'
-          minVoteCount = 100
+          minVoteCount = 350
           maxVoteCount = null
         } else if (this.difficulty === 'medium') {
           sortBy ='popularity.desc'
-          minVoteCount = 5
-          maxVoteCount = 99
+          minVoteCount = 100
+          maxVoteCount = 299
         } else {
           sortBy = 'popularity.asc'
-          minVoteCount = 5
+          minVoteCount = 100
           maxVoteCount = null
         }
 
-        for (let i = 0; i < 10; i++){
+        for (let i = 0; i < this.totalQuestions; i++){
           let actPage = pagesForGame[i]
           const data = await this.fetchMovies(sortBy, minVoteCount, maxVoteCount , actPage);
           movies.push(data)
