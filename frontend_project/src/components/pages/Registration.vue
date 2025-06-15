@@ -62,6 +62,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
+const score = ref(0)
 const router = useRouter()
 const authStore = useAuthStore()
 const username = ref('')
@@ -102,7 +103,7 @@ const handleSubmit = async () => {
       error.value = 'This nickname is already taken. Please choose another one.'
       return
     }
-    await authStore.register(email.value, password.value, username.value)
+    await authStore.register(email.value, password.value, username.value, score.value)
     router.push('/profile')
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {

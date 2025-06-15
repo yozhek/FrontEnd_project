@@ -39,14 +39,14 @@ export const useAuthStore = defineStore('auth', {
       });
     },
 
-    async register(email, password, nickname) {
+    async register(email, password, nickname, score) {
       this.loading = true;
       this.error = null;
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         this.user = userCredential.user;
-        await createUserProfile(userCredential.user.uid, { email, nickname });
-        this.userProfile = { email, nickname };
+        await createUserProfile(userCredential.user.uid, { email, nickname, score});
+        this.userProfile = { email, nickname, score};
         return userCredential.user;
       } catch (error) {
         this.error = error.message;

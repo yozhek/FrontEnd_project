@@ -60,8 +60,13 @@
           <p>Correct Answers: {{ correctAnswers }}</p>
           <p>Total Questions: {{ totalQuestions }}</p>
           <p>Score: {{ score }}%</p>
+          <p>
+            Points this game:
+            <span>{{ gamePoints > 0 ? '+' : '' }}{{ gamePoints }}</span>
+          </p>
+          <p>Your total score: {{ userScore }}</p>
+          <h3>Review your answers:</h3>
         </div>
-        <h3>Review your answers:</h3>
       </div>
       <div class="review-list">
         <div v-for="(ans, idx) in userAnswers" :key="idx" class="review-item">
@@ -76,6 +81,10 @@
             >
               <strong>Your answer:</strong> {{ ans.selected }}
             </p>
+            <p>
+              <strong>Points for this question:</strong>
+              <span>{{ ans.points > 0 ? '+' : '' }}{{ ans.points }}</span>
+            </p>
           </div>
         </div>
       </div>
@@ -88,6 +97,9 @@
 const API_KEY = '563f70945fc2525450acc89c06c8c972'
 const BASE_URL = 'https://api.themoviedb.org/3'
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original'
+
+import { useAuthStore } from '@/stores/auth'
+import { updateUserScore, getUserProfile } from '@/services/userProfile'
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -125,6 +137,9 @@ export default {
       loading: false,
       error: '',
       userAnswers: [],
+      gamePoints: 0,
+      userScore: 0,
+      questionPoints: [],
     }
   },
   methods: {
@@ -140,6 +155,8 @@ export default {
       this.progress = 0
       this.selectedAnswer = null
       this.userAnswers = []
+      this.gamePoints = 0
+      this.questionPoints = []
       try {
         await this.loadQuestions()
         this.currentQuestion = this.questions[0]
@@ -267,15 +284,37 @@ export default {
       const data = await response.json()
       return data.backdrops || []
     },
+    getPointsForAnswer(isCorrect) {
+      let points = 0
+      if (this.difficulty === 'easy') points = 1
+      else if (this.difficulty === 'medium') points = 3
+      else points = 5
+      return isCorrect ? points : -points
+    },
+    async updateUserScoreInFirebase() {
+      const authStore = useAuthStore()
+      const user = authStore.user
+      if (user) {
+        await updateUserScore(user.uid, this.gamePoints)
+        const profile = await getUserProfile(user.uid)
+        this.userScore = profile?.score ?? 0
+      }
+    },
     checkAnswer(answer) {
+      const isCorrect = answer === this.currentQuestion.correctAnswer
+      const points = this.getPointsForAnswer(isCorrect)
+      this.questionPoints.push(points)
+      this.gamePoints += points
       this.userAnswers.push({
         question: this.currentQuestion,
         selected: answer,
+        points: points,
+        isCorrect: isCorrect,
       })
       this.selectedAnswer = answer
       this.nextQuestion()
     },
-    nextQuestion() {
+    async nextQuestion() {
       this.currentQuestionIndex++
       this.selectedAnswer = null
       if (this.currentQuestionIndex < this.questions.length) {
@@ -285,6 +324,7 @@ export default {
         this.correctAnswers = this.userAnswers.filter(
           (ans, idx) => ans.selected === this.questions[idx].correctAnswer,
         ).length
+        await this.updateUserScoreInFirebase()
         this.showResults = true
         this.showGame = false
       }
@@ -297,6 +337,8 @@ export default {
       this.progress = 0
       this.selectedAnswer = null
       this.userAnswers = []
+      this.gamePoints = 0
+      this.questionPoints = []
     },
   },
   computed: {

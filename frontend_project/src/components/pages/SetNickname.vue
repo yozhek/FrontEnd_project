@@ -30,6 +30,7 @@ import { createUserProfile } from '@/services/userProfile'
 
 defineOptions({ name: 'SetNickname' })
 
+const score = ref(0)
 const router = useRouter()
 const authStore = useAuthStore()
 const nickname = ref('')
@@ -47,9 +48,10 @@ const handleSubmit = async () => {
     }
     await createUserProfile(user.uid, {
       email: user.email,
-      nickname: nickname.value
+      nickname: nickname.value,
+      score: score.value
     })
-    authStore.userProfile = { email: user.email, nickname: nickname.value }
+    authStore.userProfile = { email: user.email, nickname: nickname.value, score: score.value}
     router.push('/profile')
   } catch (err) {
     error.value = err.message
