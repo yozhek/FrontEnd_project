@@ -22,7 +22,6 @@
         <button class="play-button" @click="showDifficulty = true">Play Now</button>
       </div>
     </div>
-
     <!-- Difficulty Selection -->
     <div class="difficulty-modal" v-if="showDifficulty">
       <div class="difficulty-content">
@@ -34,6 +33,7 @@
         </div>
       </div>
     </div>
+    <FactsButton :movie-title="currentQuestion.original_title" :is-answered="!!selectedAnswer" v-if="showGame" />
 
     <!-- Game Interface -->
     <div class="game-interface" v-if="showGame">
@@ -55,7 +55,6 @@
         </div>
       </div>
     </div>
-
     <!-- Results Screen -->
     <div class="results-screen" v-if="showResults">
       <div class="quizResults">
@@ -98,6 +97,8 @@
 </template>
 
 <script>
+import FactsButton from '@/components/components/FactsButton.vue'
+
 const API_KEY = '563f70945fc2525450acc89c06c8c972'
 const BASE_URL = 'https://api.themoviedb.org/3'
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original'
@@ -120,6 +121,7 @@ function getRandomInt(min, max) {
 
 export default {
   name: 'GameView',
+  components: { FactsButton },
   data() {
     return {
       APIrestriction: 500,
