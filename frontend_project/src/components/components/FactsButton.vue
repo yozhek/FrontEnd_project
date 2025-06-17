@@ -1,48 +1,57 @@
 <template>
-    <!-- Кнопка, що плаває у верхньому правому куті -->
+  <button
+    v-if="!showChat"
+    @click="toggleChat"
+    class="button"
+    :disabled="loading"
+    aria-label="Open chat"
+  >
+    Get a hint
+  </button>
+
+  <div v-if="showChat" class="chat-window" role="dialog" aria-modal="true" aria-label="Chat window">
+    <div v-if="showWarning" class="chat-message ai">
+      You can use the following hints as help, but each hint will cost you 1 point
+    </div>
+
+    <div v-if="userMessage" class="chat-message user">
+      🔍 {{ userMessage }}
+    </div>
+
+    <div v-if="loading" class="chat-message ai">
+      ⏳ Loading hint...
+    </div>
+
+    <div v-if="error" class="chat-message ai error">
+      ❗ {{ error }}
+    </div>
+
+    <div v-if="fact" class="chat-message ai">
+      💡 {{ fact }}
+    </div>
+
+    <div class="hint-options" v-if="showHintOptions && !loading && !error">
       <button
-        v-if="!showChat"
-        @click="toggleChat"
-        class="button"
+        class="hint-option-btn"
+        v-for="option in hintOptions"
+        :key="option.key"
+        @click="fetchFact(option.prompt)"
         :disabled="loading"
-        aria-label="Open chat"
       >
-        {{buttonText}}
-      </button>
-    <!-- Віконце чату, що з’являється справа -->
-    <div v-if="showChat" class="chat-window" role="dialog" aria-modal="true" aria-label="Chat window">
-      <div class="chat-message user">
-        🔍 {{ userMessage }}
-      </div>
-
-      <div v-if="loading" class="chat-message ai">
-        ⏳ Loading hint...
-      </div>
-
-      <div v-else-if="fact" class="chat-message ai">
-        💡 {{ fact }}
-      </div>
-
-      <div v-else-if="error" class="chat-message ai error">
-        ❗ {{ error }}
-      </div>
-
-      <div class="hint-options" v-if="!loading">
-        <button
-          class="hint-option-btn"
-          v-for="option in hintOptions"
-          :key="option.key"
-          @click="fetchFact(option.prompt)"
-          :disabled="loading"
-        >
-          {{ option.label }}
-        </button>
-      </div>
-
-      <button class="btn-close-chat" @click="toggleChat" aria-label="Close chat">
-        ✖
+        {{ option.label }}
       </button>
     </div>
+
+    <div v-if="!showHintOptions && !loading && !error">
+      <button class="hint-option-btn" @click="onGetHintClick" :disabled="loading">
+        Get a hint
+      </button>
+    </div>
+
+    <button class="btn-close-chat" @click="toggleChat" aria-label="Close chat">
+      ✖
+    </button>
+  </div>
 </template>
 
 <script setup>
@@ -53,94 +62,75 @@ const props = defineProps({
   movieTitle: {
     type: String,
     required: true,
-  },
-  isAnswered: {
-    type: Boolean,
-    default: false,
-  },
+  }
 });
+const emits = defineEmits(["deduct-points"]);
 
 const showChat = ref(false);
 const fact = ref("");
 const loading = ref(false);
 const error = ref("");
+const showHintOptions = ref(false);
+const showWarning = ref(true);
+const usedHints = ref(new Set());
+
 
 const API_KEY = "AIzaSyAG-l1AAbD1SCYS11c4ChvHyGY8RhGI2xQ";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-const buttonText = computed(() => {
-  return props.isAnswered ? "Show a fact about this film" : "Get a hint";
-});
-
 const userMessage = computed(() => {
-  return props.isAnswered
-    ? `Fact about "${props.movieTitle}"`
-    : "Get a hint";
+  return fact.value ? `Get a hint` : "";
 });
 
 const hintOptions = [
-  {
-    key: "year",
-    label: "Year of release",
-    prompt: `Give a year of the release year of the film "${props.movieTitle}". Do not mention the title.`,
-  },
-  {
-    key: "genre",
-    label: "Genre",
-    prompt: `Give the genre of the film "${props.movieTitle}". Do not mention the title.`,
-  },
-  {
-    key: "actors",
-    label: "Main actors",
-    prompt: `Give some main actors of the film "${props.movieTitle}". Do not mention the title.`,
-  },
-  {
-    key: "plot",
-    label: "Plot hint",
-    prompt: `Give a hint about the plot of the film "${props.movieTitle}" without spoilers. Do not mention the title.`,
-  },
-  {
-    key: "awards",
-    label: "Awards or records",
-    prompt: `Give an awards or records related to the film "${props.movieTitle}". Do not mention the title.`,
-  },
+  { key: "year", label: "Year of release", prompt: `Give the release year of "${props.movieTitle}". Do not mention the title.` },
+  { key: "genre", label: "Genre", prompt: `Give the genre of "${props.movieTitle}". Do not mention the title.` },
+  { key: "actors", label: "Main actors", prompt: `Give main actors of "${props.movieTitle}". Do not mention the title.` },
+  { key: "plot", label: "Plot hint", prompt: `Give a plot hint for "${props.movieTitle}" without spoilers. Do not mention the title.` },
+  { key: "awards", label: "Awards or records", prompt: `Give awards or records related to "${props.movieTitle}". Do not mention the title. In 1-2 short sentences` },
 ];
+
+function deductPoint() {
+  // Тут ти можеш викликати свій метод для оновлення балів
+  // Наприклад: emit("deduct-point")
+  console.log("Point deducted!"); // Поки просто для перевірки
+}
 
 function toggleChat() {
   showChat.value = !showChat.value;
-  if (showChat.value && !fact.value && !loading.value) {
-    fetchFact();
-  }
+  fact.value = "";
+  error.value = "";
+  loading.value = false;
+  showHintOptions.value = false;
+  showWarning.value = true;
+  usedHints.value = [];
 }
 
-async function fetchFact(customPrompt) {
+function onGetHintClick() {
+  showHintOptions.value = true;
+  showWarning.value = false;
+}
+
+async function fetchFact(customPrompt, key) {
   loading.value = true;
   fact.value = "";
   error.value = "";
 
   try {
+    if (key && !usedHints.value.has(key)) {
+      deductPoint();
+      usedHints.value.add(key);
+    }
+
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    let prompt;
-    if (customPrompt) {
-      prompt = customPrompt;
-    } else {
-      prompt = props.isAnswered
-        ? `Write an interesting fact about film "${props.movieTitle}". Fact should be short (1-2 sentences), informative and interesting. Answer in english.`
-        : `Give a hint about "${props.movieTitle}", but DONT mention the movie title in your hint. Hint should help to guess the film. Answer briefly (1-2 sentences).`;
-    }
+    const prompt = customPrompt;
 
     const result = await model.generateContent(prompt);
-    const response = await result.response;
+    const response = result.response;
     const text = await response.text();
 
-    if (text && text.trim()) {
-      fact.value = text.trim();
-    } else {
-      fact.value = props.isAnswered
-        ? `Could not get the fact about "${props.movieTitle}".`
-        : "Could not get a hint.";
-    }
+    fact.value = text?.trim() || "Could not get a hint.";
   } catch (err) {
     console.error("Gemini API error:", err);
     error.value = "There was an error retrieving information. Please try again.";
@@ -149,13 +139,6 @@ async function fetchFact(customPrompt) {
   }
 }
 
-watch(
-  () => props.isAnswered,
-  () => {
-    fact.value = "";
-    showChat.value = false;
-  }
-);
 
 watch(
   () => props.movieTitle,
@@ -164,6 +147,9 @@ watch(
     showChat.value = false;
     loading.value = false;
     error.value = "";
+    showHintOptions.value = false;
+    showWarning.value = true;
+    usedHints.value = [];
   }
 );
 </script>
@@ -200,19 +186,21 @@ watch(
   background: var(--color-white);
   border-radius: 14px;
   padding: 1rem;
-  padding-top: 2rem; /* Місце для хрестика */
+  padding-top: 2rem;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   transition: all 0.3s ease;
 }
-.hint-options {
-  display: flex;
-  flex-wrap: wrap; /* якщо кнопки не вміщаються в ряд — переносяться */
-  gap: 0.1rem; /* горизонтальний та вертикальний відступ між кнопками */
-  justify-content: center; /* щоб кнопки були по центру */
-}
+
 .chat-window:hover {
   transform: translateY(-1px) scale(1.02);
+}
+
+.hint-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1rem;
+  justify-content: center;
 }
 
 .hint-option-btn {
@@ -228,7 +216,6 @@ watch(
   text-align: center;
   transition: background-color 0.3s ease, transform 0.2s ease;
   display: inline-block;
-
 }
 
 .hint-option-btn:hover {
@@ -236,9 +223,8 @@ watch(
   transform: translateY(-1px);
 }
 
-
 .chat-message {
-  margin: 0.3rem 0; /* відступи між повідомленнями */
+  margin: 0.3rem 0;
   padding: 0.4rem 0.6rem;
   border-radius: 10px;
   font-size: 0.85rem;
