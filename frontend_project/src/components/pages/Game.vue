@@ -33,7 +33,6 @@
         </div>
       </div>
     </div>
-    <FactsButton :movie-title="currentQuestion.original_title" :is-answered="!!selectedAnswer" v-if="showGame" />
 
     <!-- Game Interface -->
     <div class="game-interface" v-if="showGame">
@@ -41,7 +40,10 @@
         <div class="progress" :style="{ width: progress + '%' }"></div>
       </div>
       <div class="question-container">
-        <img :src="currentQuestion.screenshot" alt="Movie Screenshot" class="movie-screenshot" />
+        <div class="screenshot-wrapper">
+          <img :src="currentQuestion.screenshot" alt="Movie Screenshot" class="movie-screenshot" />
+          <FactsButton :movie-title="currentQuestion.original_title" :is-answered="!!selectedAnswer" v-if="showGame" />
+        </div>
         <div class="options-container">
           <button
             v-for="option in currentQuestion.options"
@@ -362,6 +364,12 @@ export default {
 
 <style scoped>
 
+.screenshot-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+  //display: inline-block;
+}
+
 .loading-modal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -544,7 +552,7 @@ h2{
   max-width: 100%;
   height: auto;
   border-radius: 20px;
-  margin-bottom: 20px;
+  //margin-bottom: 20px;
 }
 
 .options-container {
