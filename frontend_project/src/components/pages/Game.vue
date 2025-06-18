@@ -42,7 +42,7 @@
       <div class="question-container">
         <div class="screenshot-wrapper">
           <img :src="currentQuestion.screenshot" alt="Movie Screenshot" class="movie-screenshot" />
-          <FactsButton :movie-title="currentQuestion.original_title" :is-answered="!!selectedAnswer" v-if="showGame" />
+          <FactsButton :movieTitle="currentQuestion.original_title" :isAnswered="!!selectedAnswer" v-if="showGame" />
         </div>
         <div class="options-container">
           <button
