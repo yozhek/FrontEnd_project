@@ -2,7 +2,7 @@
   <!-- Кнопка, що плаває у верхньому правому куті -->
   <div class="chat-hover-area" @mouseenter="showChat = true" @mouseleave="showChat = false">
     <button v-if="!showChat" class="button" :disabled="loading" aria-label="Open chat">
-      <img src="/src/assets/light-bulb.png" alt="question-mark" class="question-mark" />
+      <img width="40" height="40" src="/src/assets/light-bulb.png" alt="question-mark" class="question-mark" />
     </button>
     <!-- Віконце чату, що з'являється справа -->
     <transition name="fade-chat">
@@ -163,8 +163,8 @@ watch(
   border: none;
   right: 6px;
   bottom: 10px;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 20px;
   cursor: pointer;
   transition: transform 0.3s ease;
