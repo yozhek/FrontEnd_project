@@ -36,7 +36,7 @@
 
 <script setup>
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   movieTitle: {
@@ -59,7 +59,7 @@ const usedHintKeys = ref([])
 const API_KEY = 'AIzaSyAG-l1AAbD1SCYS11c4ChvHyGY8RhGI2xQ'
 const genAI = new GoogleGenerativeAI(API_KEY)
 
-const hintOptions = [
+const hintOptions = computed(() => [
   {
     key: 'year',
     label: 'Year of release',
@@ -85,7 +85,7 @@ const hintOptions = [
     label: 'Awards or records',
     prompt: `Give an awards or records related to the film "${props.movieTitle}". Do not mention the title.`,
   },
-]
+]);
 
 async function fetchFact(customPrompt, key) {
   loading.value = true
