@@ -121,12 +121,10 @@ const handleSubmit = async () => {
       error.value = 'This nickname is already taken. Please choose another one.'
       return
     }
-    const user = await authStore.register(email.value, password.value)
+    const user = await authStore.register(email.value, password.value, username.value, score.value)
     showVerifyWait.value = true
     verificationSent.value = true
     startVerificationCheck(user, username.value)
-    await authStore.register(email.value, password.value, username.value, score.value)
-    router.push('/profile')
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {
       error.value = 'This email is already in use.'

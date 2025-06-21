@@ -12,7 +12,7 @@ import {
   reauthenticateWithCredential
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
-import { getUserProfile } from '@/services/userProfile';
+import { getUserProfile, createUserProfile } from '@/services/userProfile';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -72,7 +72,7 @@ export const useAuthStore = defineStore('auth', {
           await signOut(auth);
           this.user = null;
           this.userProfile = null;
-          throw { code: 'auth/email-not-verified', message: 'Подтвердите email для входа.' };
+          throw { code: 'auth/email-not-verified', message: 'Confirm your email address to log in.' };
         }
         this.user = userCredential.user;
         this.userProfile = await getUserProfile(userCredential.user.uid);
