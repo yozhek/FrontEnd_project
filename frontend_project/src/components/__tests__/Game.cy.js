@@ -22,32 +22,41 @@ describe('GameView', () => {
       loading: false,
       error: null,
     };
-  });
-
-  it('Completes the game flow from rules to results', () => {
     mount(Game, {
       global: {
         plugins: [createPinia()],
       },
     });
+  });
 
-    // Check rules page and click "Play Now"
+  it('completes the game on Easy, then Play Again on Medium, then Play Again on Hard', () => {
+    // Start on Easy
     cy.contains('How to Play').should('exist');
     cy.contains('Play Now').should('exist').click();
-
-    // Choose difficulty
     cy.contains('Easy').should('exist').click();
-
-    //Wait for the game interface
     cy.get('.game-interface', { timeout: 10000 }).should('exist');
-
-    //Answer all questions
     for (let i = 0; i < 10; i++) {
       cy.get('.option-btn', { timeout: 10000 }).first().should('exist').click();
     }
-
-    // Verify results page
     cy.contains('Quiz Results', { timeout: 10000 }).should('exist');
-    cy.contains('Play Again', { timeout: 10000 }).should('exist');
+    cy.get('.play-again-btn', { timeout: 10000 }).should('exist').click();
+
+    // Now on Medium
+    cy.contains('Medium').should('exist').click();
+    cy.get('.game-interface', { timeout: 10000 }).should('exist');
+    for (let i = 0; i < 10; i++) {
+      cy.get('.option-btn', { timeout: 10000 }).first().should('exist').click();
+    }
+    cy.contains('Quiz Results', { timeout: 10000 }).should('exist');
+    cy.get('.play-again-btn', { timeout: 10000 }).should('exist').click();
+
+    // Now on Hard
+    cy.contains('Hard').should('exist').click();
+    cy.get('.game-interface', { timeout: 10000 }).should('exist');
+    for (let i = 0; i < 10; i++) {
+      cy.get('.option-btn', { timeout: 10000 }).first().should('exist').click();
+    }
+    cy.contains('Quiz Results', { timeout: 10000 }).should('exist');
+    cy.get('.play-again-btn', { timeout: 10000 }).should('exist');
   });
 });
