@@ -20,8 +20,10 @@
     </div>
 
     <div class="second-container">
-      <homeBox info="profile"></homeBox>
-      <homeBox info="login"></homeBox>
+      <div class="box-for-tablets">
+        <homeBox info="profile"></homeBox>
+        <homeBox info="login"></homeBox>
+      </div>
       <homeBox info="social-networks"></homeBox>
     </div>
   </div>
@@ -39,6 +41,11 @@ export default {
 </script>
 
 <style scoped>
+.box-for-tablets{
+  display: flex;
+  gap: 50px;
+  min-width: 66.6%;
+}
 
 .main_home{
   display: flex;
@@ -80,4 +87,64 @@ export default {
 ul, p{
   color: var(--color-black);
 }
+
+@media (max-width: 1024px) {
+  .box-for-tablets{
+    gap: 20px;
+  }
+
+  .main_home{
+    gap: 20px;
+  }
+
+  .first-container{
+    width: auto;
+    display: flex;
+    gap: 20px;
+  }
+
+  .second-container{
+    width: auto;
+    display: flex;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 1000px) {
+
+  .main_home{
+    gap: 20px;
+  }
+
+  .first-container{
+    width: auto;
+    display: flex;
+    gap: 20px;
+  }
+
+
+  .second-container{
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .first-container{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .box-for-tablets{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .main-info{
+    padding: 20px;
+  }
+}
+
 </style>
