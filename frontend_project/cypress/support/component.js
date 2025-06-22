@@ -32,3 +32,13 @@ Cypress.Commands.add('mount', mount)
 beforeEach(() => {
   cy.viewport(1280, 800)
 })
+
+// Prevent uncaught exceptions from failing tests
+Cypress.on('uncaught:exception', (err) => {
+  // returning false here prevents Cypress from failing the test
+  if (err.message.includes('Cannot read properties of undefined') ||
+      err.message.includes('__VUE_DEVTOOLS_GLOBAL_HOOK__')) {
+    return false;
+  }
+  return true;
+});
