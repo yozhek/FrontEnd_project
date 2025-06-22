@@ -28,3 +28,7 @@ Cypress.Commands.add('mount', mount)
 
 // Example use:
 // cy.mount(MyComponent)
+
+beforeEach(() => {
+  cy.viewport(1280, 800)
+})
