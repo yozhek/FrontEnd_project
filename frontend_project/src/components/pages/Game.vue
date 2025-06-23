@@ -367,7 +367,6 @@ export default {
 .screenshot-wrapper {
   position: relative;
   margin-bottom: 20px;
-  //display: inline-block;
 }
 
 .loading-modal {
@@ -401,6 +400,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   flex-grow: 1;
 }
 
@@ -474,6 +474,7 @@ h2{
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 500;
 }
 
 .difficulty-content {
@@ -517,7 +518,7 @@ h2{
 }
 
 .game-interface {
-  max-width: 1000px;
+  max-width: 100%;
   background: var(--color-white);
   border-radius: 20px;
   box-shadow: 0 0 20px var(--color-black-shadow);
@@ -552,7 +553,6 @@ h2{
   max-width: 100%;
   height: auto;
   border-radius: 20px;
-  //margin-bottom: 20px;
 }
 
 .options-container {
@@ -565,6 +565,7 @@ h2{
   font-size: 1.3rem;
   padding: 1rem;
   border: 2px solid var(--color-primary);
+  color: var(--color-black);
   border-radius: 20px;
   background: var(--color-white);
   cursor: pointer;
@@ -578,6 +579,7 @@ h2{
 }
 
 .results-screen {
+  width: 100%;
   text-align: center;
 }
 
@@ -658,6 +660,103 @@ h2{
 .progress-warning {
   color: #f44336;
   font-weight: 600;
+}
+@media (max-width: 1024px) {
+  .results-screen{
+    width: 80%;
+  }
+  .review-item {
+    flex-direction: column;
+  }
+  .review-screenshot {
+    width: 100%;
+  }
+  .review-screenshot:hover{
+    transform: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .results-screen{
+    width: 100%;
+  }
+  .review-screenshot {
+    width: 100%;
+  }
+  .rules-content{
+    padding: 20px;
+  }
+  .rules-content ul {
+    margin: 20px 0;
+  }
+  .rules-content li {
+    margin: 0.7rem 0;
+    font-size: 1.3rem;
+  }
+  .play-button{
+    padding: 1.2rem 2.2rem;
+    font-size: 1.5rem;
+  }
+  .game-interface{
+    padding: 20px;
+  }
+  .progress-bar {
+    margin-bottom: 20px;
+  }
+  .screenshot-wrapper {
+    margin-bottom: 10px;
+  }
+  .options-container {
+    gap: 10px;
+  }
+  .option-btn {
+    font-size: 1.3rem;
+    padding: 1rem;
+    border: 2px solid var(--color-primary);
+  }
+}
+
+@media (max-width: 600px) {
+  .rules-content{
+    padding: 10px;
+  }
+  .rules-content ul {
+    margin: 10px 0;
+  }
+  .rules-content li {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+  }
+  .play-button{
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+  }
+  .difficulty-content{
+    margin: 0 10px;
+  }
+  .difficulty-options {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .game-interface{
+    padding: 10px;
+  }
+  .progress-bar {
+    margin-bottom: 10px;
+  }
+  .screenshot-wrapper {
+    margin-bottom: 5px;
+  }
+  .options-container {
+    gap: 5px;
+  }
+  .option-btn {
+    font-size: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--color-primary);
+  }
+
 }
 
 </style>

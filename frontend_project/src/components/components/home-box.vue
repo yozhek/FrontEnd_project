@@ -135,7 +135,7 @@ a{
 }
 
 a:hover{
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 a:hover .facebook, a:hover .twitter, a:hover .inst{

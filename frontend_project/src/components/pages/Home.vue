@@ -89,6 +89,7 @@ ul, p{
 }
 
 @media (max-width: 1024px) {
+
   .box-for-tablets{
     gap: 20px;
   }
@@ -132,19 +133,28 @@ ul, p{
 }
 
 @media (max-width: 600px) {
+  .main_home{
+    gap: 10px;
+  }
   .first-container{
     display: flex;
     flex-direction: column;
+    gap: 10px;
+  }
+  .second-container{
+    gap: 10px;
   }
 
   .box-for-tablets{
     display: flex;
     flex-direction: column;
+    gap: 10px;
   }
 
   .main-info{
     padding: 20px;
   }
+
 }
 
 </style>

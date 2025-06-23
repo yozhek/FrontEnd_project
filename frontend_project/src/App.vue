@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <nav class="navbar">
+    <nav :class="['navbar', { 'navbar-scrolled': isScrolled }]">
       <div class="nav-mid">
         <div class="nav-left">
           <RouterLink to="/">Home</RouterLink>
@@ -22,6 +22,7 @@
         </div>
       </div>
       <div class="burger-wrapper-mobile">
+        <h1 class="game-name">Movie Quiz</h1>
         <button class="burger-btn" @click="burgerOpen = !burgerOpen" aria-label="Open menu">
           <svg
             width="36"
@@ -29,6 +30,7 @@
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            :class="['svg', { 'svg-scrolled': isScrolled }]"
           >
             <rect y="4" width="24" height="2" rx="1" fill="currentColor" />
             <rect y="11" width="24" height="2" rx="1" fill="currentColor" />
@@ -83,7 +85,7 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth'
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
@@ -105,6 +107,19 @@ const handleLogout = async () => {
   await authStore.logout()
   router.push('/')
 }
+
+const isScrolled = ref(false)
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 0
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -113,6 +128,9 @@ const handleLogout = async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+  min-height: 100vh;
 }
 
 .navbar {
@@ -210,9 +228,10 @@ const handleLogout = async () => {
 main {
   display: flex;
   flex-direction: column;
-  min-height: 78vh;
+  //min-height: 78vh;
   width: 1000px;
   margin: 20px;
+  flex: 1;
 }
 
 .footer {
@@ -268,17 +287,59 @@ main {
 .burger-wrapper-mobile {
   display: none;
 }
+
+.svg{
+  transition: all 0.3s;
+}
 @media (max-width: 600px) {
+  .navbar:hover {
+    transform: none;
+    box-shadow: 0 0 20px var(--color-black-shadow);
+  }
+  #app{
+    min-height: 100vh;
+  }
   .nav-mid {
     display: none !important;
   }
   .burger-wrapper-mobile {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     z-index: 20;
+    margin: 0 10px;
   }
+  .footer {
+    display: none !important;
+  }
+
+  main {
+    flex: 1;
+    margin: 10px 0 0 0;
+  }
+  .navbar {
+    width: 100%;
+    height: 70px;
+    border: 10px solid var(--color-white);
+    position: sticky;
+    top: 2px;
+    transition: all 0.5s;
+  }
+  .navbar-scrolled {
+    height: 103%;
+    width: 103%;
+    font-size: 103%;
+    box-shadow: 0 10px 20px var(--color-black-shadow);
+    border-color: var(--color-accent);
+    //z-index: 50;
+  }
+
+  .svg-scrolled{
+    width: 38px;
+    height: 38px;
+  }
+
 }
 
 .burger-btn {
@@ -289,12 +350,12 @@ main {
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 20px;
-  margin-right: 10px;
   font-size: 2rem;
   transition: background 0.3s;
 }
 
-.burger-btn:active, .burger-btn:focus {
+.burger-btn:active,
+.burger-btn:focus {
   background: var(--color-accent);
 }
 
@@ -305,7 +366,7 @@ main {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: 100;
   display: flex;
   justify-content: flex-end;
 }
@@ -362,5 +423,4 @@ main {
   border: none;
   font-weight: 600;
 }
-
 </style>
