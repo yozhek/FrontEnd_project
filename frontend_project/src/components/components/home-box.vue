@@ -202,7 +202,7 @@ a:hover .facebook, a:hover .twitter, a:hover .inst{
     height: 70px;
   }
 
-  @media (min-width: 320px) and (max-width: 400px) {
+  @media (max-width: 400px) {
     button {
       height: 60px;
     }
