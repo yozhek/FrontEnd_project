@@ -1,5 +1,5 @@
 <template>
-  <div class="main-info">
+  <div class="main-profile">
     <div class="auth-form">
       <h2 class="auth-title">Welcome to MovieGuess</h2>
       <p class="auth-description">Log in to start your movie guessing adventure!</p>

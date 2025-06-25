@@ -1,5 +1,5 @@
 <template>
-  <div class="main-info">
+  <div class="main-profile">
     <!-- Если не авторизован -->
     <div v-if="!currentUserProfile" class="auth-form">
       <h2 class="auth-title">Profile is available only for authorized users</h2>
