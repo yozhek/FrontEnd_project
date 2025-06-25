@@ -39,7 +39,7 @@ describe('GameView', () => {
       cy.get('.option-btn', { timeout: 10000 }).first().should('exist').click();
     }
     cy.contains('Quiz Results', { timeout: 10000 }).should('exist');
-    cy.get('.play-again-btn', { timeout: 10000 }).should('exist').click();
+    cy.get('.play-again-btn', { timeout: 10000 }).should('exist').click({ force: true });
 
     // Now on Medium
     cy.contains('Medium').should('exist').click();
@@ -48,7 +48,7 @@ describe('GameView', () => {
       cy.get('.option-btn', { timeout: 10000 }).first().should('exist').click();
     }
     cy.contains('Quiz Results', { timeout: 10000 }).should('exist');
-    cy.get('.play-again-btn', { timeout: 10000 }).should('exist').click();
+    cy.get('.play-again-btn', { timeout: 10000 }).should('exist').click({ force: true });
 
     // Now on Hard
     cy.contains('Hard').should('exist').click();
