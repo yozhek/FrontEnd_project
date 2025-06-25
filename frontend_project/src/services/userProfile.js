@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, updateDoc, increment } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 
 export async function createUserProfile(userId, profile) {
@@ -18,5 +18,13 @@ export async function getUserProfile(userId) {
 
 export async function updateUserScore(userId, delta) {
   const userRef = doc(db, 'users', userId)
-  await updateDoc(userRef, { score: increment(delta) })
+  const userSnap = await getDoc(userRef)
+  let currentScore = 0
+  if (userSnap.exists()) {
+    const data = userSnap.data()
+    currentScore = typeof data.score === 'number' ? data.score : 0
+  }
+  let newScore = currentScore + delta
+  if (newScore < 0) newScore = 0
+  await updateDoc(userRef, { score: newScore })
 }
