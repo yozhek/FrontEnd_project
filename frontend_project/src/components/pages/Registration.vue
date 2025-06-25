@@ -1,5 +1,5 @@
 <template>
-  <div class="main-info">
+  <div class="main-profile">
     <div v-if="!showVerifyWait" class="auth-form">
       <h2 class="auth-title">Create Your Account</h2>
       <p class="auth-description">Join MovieGuess and start your movie guessing adventure!</p>
@@ -187,7 +187,7 @@ async function startVerificationCheck(user, nickname) {
       clearInterval(verifyInterval.value)
       // Create profile only after email is verified
       const { createUserProfile } = await import('@/services/userProfile')
-      await createUserProfile(user.uid, { email: user.email, nickname })
+      await createUserProfile(user.uid, { email: user.email, nickname, score: score.value })
       // Реальный re-login для реактивности
       const { signInWithEmailAndPassword, signOut } = await import('firebase/auth')
       const { auth } = await import('@/firebase/config')

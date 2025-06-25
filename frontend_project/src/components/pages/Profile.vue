@@ -25,8 +25,8 @@
             <span class="value">{{ user.nickname }}</span>
           </div>
           <div class="info-item">
-            <span class="label">Points:</span>
-            <span class="value">{{ user.totalPoints }} ⭐</span>
+            <span class="label">Score:</span>
+            <span class="value">{{ user.score }} ⭐</span>
           </div>
         </div>
       </div>
@@ -106,10 +106,12 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
+import { db } from '@/firebase/config'
+import { doc, onSnapshot } from 'firebase/firestore'
 
 defineOptions({ name: 'ProfilePage' })
 
@@ -117,20 +119,41 @@ const authStore = useAuthStore()
 const { currentUserProfile } = storeToRefs(authStore)
 const router = useRouter()
 
+const score = ref('-')
+let unsubscribeScore = null
+
+onMounted(() => {
+  if (authStore.user && authStore.user.uid) {
+    const userRef = doc(db, 'users', authStore.user.uid)
+    unsubscribeScore = onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data()
+        score.value = typeof data.score === 'number' ? data.score : 0
+      } else {
+        score.value = 0
+      }
+    })
+  }
+})
+
+onUnmounted(() => {
+  if (unsubscribeScore) unsubscribeScore()
+})
+
 const user = computed(() => {
   if (!currentUserProfile.value) {
     return {
       email: 'Not authorized',
       nickname: 'Guest',
       quizzesCompleted: '-',
-      totalPoints: '-',
+      score: '-',
     }
   }
   return {
     email: currentUserProfile.value.email,
     nickname: currentUserProfile.value.nickname,
     quizzesCompleted: '-', // Можно заменить на реальные данные, если появятся
-    totalPoints: '-', // Можно заменить на реальные данные, если появятся
+    score: score.value, // реактивный score
   }
 })
 
