@@ -116,6 +116,7 @@ const handleScroll = () => {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+  authStore.init()
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)

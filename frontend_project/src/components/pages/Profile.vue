@@ -106,7 +106,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
@@ -122,23 +122,39 @@ const router = useRouter()
 const score = ref('-')
 let unsubscribeScore = null
 
+function subscribeToScore(uid) {
+  if (unsubscribeScore) unsubscribeScore()
+  if (!uid) {
+    score.value = '-'
+    return
+  }
+  const userRef = doc(db, 'users', uid)
+  unsubscribeScore = onSnapshot(userRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data()
+      score.value = typeof data.score === 'number' ? data.score : 0
+    } else {
+      score.value = 0
+    }
+  })
+}
+
 onMounted(() => {
   if (authStore.user && authStore.user.uid) {
-    const userRef = doc(db, 'users', authStore.user.uid)
-    unsubscribeScore = onSnapshot(userRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data()
-        score.value = typeof data.score === 'number' ? data.score : 0
-      } else {
-        score.value = 0
-      }
-    })
+    subscribeToScore(authStore.user.uid)
   }
 })
 
 onUnmounted(() => {
   if (unsubscribeScore) unsubscribeScore()
 })
+
+watch(
+  () => authStore.user && authStore.user.uid,
+  (uid) => {
+    subscribeToScore(uid)
+  }
+)
 
 const user = computed(() => {
   if (!currentUserProfile.value) {
