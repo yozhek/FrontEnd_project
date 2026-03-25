@@ -91,7 +91,7 @@ const error = ref('')
 const selectedHintKey = ref(null)
 const usedHintKeys = ref([])
 
-const API_KEY = 'AIzaSyAG-l1AAbD1SCYS11c4ChvHyGY8RhGI2xQ'
+const API_KEY = 'AIzaSyBTW5i_U89EOaKlHBWOLIyOkUK_Xjhk0zk'
 const genAI = new GoogleGenerativeAI(API_KEY)
 
 const hintOptions = computed(() => [
