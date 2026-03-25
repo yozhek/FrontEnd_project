@@ -112,9 +112,3 @@ frontend_project/
 |-- eslint.config.js        # ESLint configuration
 `-- package.json            # Scripts and dependencies
 ```
-
-## Notes
-
-- This README is written to present the project accurately as a junior frontend portfolio piece.
-- The project integrates external services including Firebase, TMDB, and Google Generative AI.
-- The repository currently includes both application code and team-deliverable features that were not all implemented by me.
