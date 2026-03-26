@@ -77,18 +77,6 @@ Create a production build:
 npm run build
 ```
 
-Run component tests:
-
-```bash
-npm run test:unit
-```
-
-Run end-to-end tests:
-
-```bash
-npm run test:e2e
-```
-
 ## Project structure overview
 
 ```text
